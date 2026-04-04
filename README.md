@@ -48,8 +48,24 @@ cd superstar-team
 claude                              # 打開 Claude Code
 /team                               # 啟動團隊
 /team 做一個讓人評價小吃的 app        # 或是直接講
-/status                             # 看裝了什麼
+/status                             # 看裝了什麼、有沒有新版
 ```
+
+## 更新
+
+安裝後 agents 和 commands 會 symlink 回這個 repo，所以：
+
+```bash
+cd superstar-team && git pull       # 大部分情況這樣就夠了
+```
+
+如果你是舊版安裝的（v1.0.x，用複製模式），跑一次升級：
+
+```bash
+cd superstar-team && ./update.sh    # 自動升級為 symlink 模式 + 更新 skills
+```
+
+`/status` 會自動告訴你有沒有新版。
 
 ---
 
