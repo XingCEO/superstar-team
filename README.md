@@ -2,16 +2,16 @@
 
 # ⭐ SUPERSTAR TEAM
 
-### 一個指令。五個 Opus。全自動交付。
+### 一個指令，五個 Opus，全自動交付
 
-**你裝過最猛的 Claude Code 設定。**
+**給 Claude Code 用的全棧 AI 開發團隊。**
 
-`/team` → 說你想做什麼 → 五個 AI 工程師同時幫你寫。
+打 `/team`，說你想做什麼，五個 Opus agent 同時幫你寫。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-Opus_4.6-blueviolet)](https://claude.ai)
 [![Agents](https://img.shields.io/badge/Agents-5_×_Opus-ff6600)](/)
-[![Skills](https://img.shields.io/badge/Skills-24_自動觸發-00cc66)](/)
+[![Skills](https://img.shields.io/badge/Skills-24-00cc66)](/)
 
 </div>
 
@@ -19,9 +19,16 @@
 
 ## 這是什麼
 
-你打 `/team`，用你自己的話說想做什麼。Opus 架構師幫你選技術棧、設計架構。你看一眼說 OK，後端和前端就在各自獨立的 git worktree 裡同時寫 code。寫完自動合併、跑測試、掃安全漏洞、做 QA、檢查設計、開 PR、更新文件、把學到的東西存起來。
+一套 Claude Code 的設定檔，裝完之後你打 `/team`，它會：
 
-**你回答 1-2 個問題，團隊做剩下的。**
+1. 問你想做什麼（用白話講就好，不用懂技術）
+2. 自動選技術棧、設計架構，讓你確認
+3. 開兩個 Opus agent 在獨立的 git worktree 裡同時寫前後端
+4. 寫完自動跑測試、安全掃描、程式碼審查、QA
+5. 開 PR、更新文件
+6. 把這次學到的東西存起來，下次不用重來
+
+你只要說想做什麼、看一眼架構說 OK，剩下全自動。
 
 ---
 
@@ -33,180 +40,139 @@ cd superstar-team
 ./install.sh
 ```
 
-一行裝好。
+---
+
+## 怎麼用
+
+```bash
+claude                              # 打開 Claude Code
+/team                               # 啟動團隊
+/team 做一個讓人評價小吃的 app        # 或是直接講
+/status                             # 看裝了什麼
+```
 
 ---
 
-## 使用
-
-```bash
-claude                              # 開啟 Claude Code
-/team                               # 啟動團隊
-/team 做一個讓人評價小吃的 app        # 或直接說
-/status                             # 看你有什麼
-```
-
-### `/team` 的完整流程
+## 流程
 
 ```
-你：「/team 做一個讓人評價小吃的 app」
-團隊：「給誰用的？先出 MVP 還是一步到位？」
-你：「公開產品，先 MVP」
+你：「做一個讓人評價小吃的 app」
 
         ╔═══════════════════════════╗
         ║   🏗️  架構師 (Opus)       ║
-        ║   選技術棧・設計架構       ║
+        ║   選技術棧，設計架構       ║
         ╚═══════════╤═══════════════╝
-                    │ 你說 OK
+                    │ 你確認
         ┌───────────┴───────────┐
         ▼                       ▼
 ╔═══════════════╗       ╔═══════════════╗
 ║  🔧 後端 Opus  ║       ║  🎨 前端 Opus  ║
 ║  Worktree A   ║       ║  Worktree B   ║
-║  API・DB・邏輯 ║       ║  UI・路由・狀態 ║
 ╚═══════╤═══════╝       ╚═══════╤═══════╝
         └───────────┬───────────┘
                     ▼
         ╔═══════════════════════════╗
-        ║     🔀 自動合併 Worktree   ║
+        ║       🔀 自動合併         ║
         ╚═══════════╤═══════════════╝
                     ▼
         ╔═══════════════════════════╗
-        ║     🧪 測試工程師 (Opus)   ║
-        ║     Unit・Integration     ║
+        ║       🧪 測試 (Opus)      ║
         ╚═══════════╤═══════════════╝
                     ▼
         ╔═══════════════════════════╗
-        ║     🔒 安全審查員 (Opus)   ║
-        ║     漏洞掃描・依賴審計     ║
+        ║       🔒 安全審查 (Opus)   ║
         ╚═══════════╤═══════════════╝
                     ▼
         ╔═══════════════════════════╗
-        ║     ⚡ 品質閘門（全自動）   ║
-        ║                           ║
-        ║  /review   程式碼審查      ║
-        ║  /cso      安全掃描       ║
-        ║  /qa       QA 測試        ║
-        ║  /design   設計審查       ║
-        ║  /health   健康檢查       ║
+        ║       ⚡ 品質閘門         ║
+        ║  審查 → 安全 → QA → 設計  ║
         ╚═══════════╤═══════════════╝
                     ▼
         ╔═══════════════════════════╗
-        ║  🚀 /ship 建 PR           ║
-        ║  📄 /document 更新文件     ║
+        ║    🚀 開 PR，更新文件      ║
         ╚═══════════╤═══════════════╝
                     ▼
         ╔═══════════════════════════╗
-        ║  🧠 知識收割               ║
-        ║  架構決策・解法模式・JSONL  ║
+        ║    🧠 存下這次的經驗       ║
         ╚═══════════════════════════╝
 ```
 
 ---
 
-## 包含什麼
+## 裝了什麼
 
-### 5 個 Agent（全 Opus）
+### 5 個 Agent
 
-| Agent | 角色 | 做什麼 |
-|-------|------|--------|
-| **架構師** | 系統設計 | 選技術棧、設計架構、定義 API 契約、分配檔案所有權 |
-| **後端** | 實作 | API 路由、資料庫 schema、業務邏輯、middleware |
-| **前端** | 實作 | UI 元件、路由、狀態管理、API 串接 |
-| **測試** | 品質 | Unit test、integration test、edge case、覆蓋率報告 |
-| **安全** | 審計 | Injection 掃描、認證審查、secrets 偵測、依賴審計 |
+全部跑 Opus，各自有明確的職責範圍和檔案邊界，不會互相踩。
 
-### 24 個自動觸發 Skills
+| Agent | 做什麼 |
+|-------|--------|
+| 架構師 | 選技術棧、畫架構、定 API、分工 |
+| 後端 | API、資料庫、業務邏輯 |
+| 前端 | UI、路由、狀態管理 |
+| 測試 | Unit test、integration test、覆蓋率 |
+| 安全 | 漏洞掃描、認證審查、依賴審計 |
 
-你不用呼叫它們。說到相關的事它們就會介入。
+### 24 個 Skill
 
-| 來源 | Stars | 技能 |
-|------|-------|------|
-| [obra/superpowers](https://github.com/obra/superpowers) | 134K | Git worktree 管理、完成前驗證、平行代理派工 |
-| [PlanetScale](https://github.com/planetscale/database-skills) | 387 | MySQL / PostgreSQL schema 設計、查詢優化 |
-| [Addy Osmani](https://github.com/addyosmani/web-quality-skills) | 1.5K | 效能優化（50+ 模式）、Core Web Vitals、WCAG 2.2 無障礙、SEO |
-| [Trail of Bits](https://github.com/trailofbits/skills) | 4.3K | 供應鏈審計、CodeQL、不安全預設偵測、多模型交叉驗證 |
-| [Compound Engineering](https://github.com/EveryInc/compound-engineering-plugin) | 12.8K | 學習迴圈 — 讓每次開發的經驗自動累積 |
-| [Excalidraw](https://github.com/coleam00/excalidraw-diagram-skill) | 1.8K | 自然語言生成架構圖 |
-| [Vercel](https://github.com/vercel-labs/agent-skills) | 24.4K | 100+ UI 審計規則：無障礙、國際化、觸控、深色模式 |
+不用手動呼叫，聊天提到相關的事就會自動載入。涵蓋資料庫優化、Web 效能、無障礙、SEO、Git 工作流、安全審計、架構圖生成等。完整清單見 [install.sh](install.sh)。
 
-### 7 Phase 流水線
-
-| Phase | 做什麼 | 自動？ |
-|-------|--------|--------|
-| 1. 聽你說 | 你描述想做什麼 | 你說 |
-| 1.5 讀知識庫 | 讀過去的決策，避免重複踩坑 | ✅ |
-| 2. 架構設計 | Opus 架構師出完整規格 + 技術棧推薦 | ✅（你確認）|
-| 3. 平行開發 | 後端 + 前端在獨立 worktree 同時寫 | ✅ |
-| 4. 整合 | 合併 worktree、處理衝突 | ✅ |
-| 5. 品質閘門 | 程式碼審查 → 安全 → QA → 設計 → 健康 | ✅ |
-| 6. 交付 | 建 PR、更新文件 | ✅ |
-| 7. 知識收割 | 存架構決策、解法模式、訓練資料 | ✅ |
-
-### 防護機制
-
-| 護欄 | 防什麼 |
-|------|--------|
-| 三振出局 | 同一個錯 3 次 → agent 強制停止回報 |
-| 檔案上限 | 改超過 10 個檔案 → 先回報 |
-| 套件上限 | 裝超過 5 個套件 → 先回報 |
-| 禁止刪檔 | 不能刪現有檔案，除非架構文件要求 |
-| 漸進啟動 | Lead 每步檢查才開下一個 |
-| 自動壓縮 | Phase 之間自動 compact context |
-| 輸出過濾 | 測試 / 建置輸出自動裁切，省 token |
-
-### 知識累積
-
-每次完工自動存：
-
-| 存什麼 | 格式 | 位置 |
-|--------|------|------|
-| 架構決策紀錄 | Markdown | `~/.claude/knowledge/` |
-| 解法模式 | Markdown | `~/.claude/knowledge/patterns/` |
-| 訓練資料 | JSONL | `~/.claude/knowledge/training/` |
-
-JSONL 格式（未來 fine-tune 用）：
-```json
-{"instruction": "...", "input": "...", "output": "...", "tags": [], "quality": "high"}
-```
-
----
-
-## 指令
+### 3 個指令
 
 | 指令 | 用途 |
 |------|------|
-| `/team` | 啟動完整團隊流水線 |
-| `/duo` | 輕量雙人模式：Opus 規劃 + Opus 執行 |
-| `/status` | 查看所有已安裝的資產和知識庫狀態 |
+| `/team` | 啟動完整團隊 |
+| `/duo` | 輕量版，一個規劃一個執行 |
+| `/status` | 看裝了什麼、知識庫有多少 |
 
 ---
 
-## 需求
+## 防護機制
 
-- **Claude Code CLI** — `npm install -g @anthropic-ai/claude-code`
-- **Claude Max 方案**（建議 — 5 個 Opus 同時跑很吃 token）
-- **git**
-- **jq**（hook 用）
+| 機制 | 說明 |
+|------|------|
+| 三振出局 | 同一個錯連續 3 次，agent 停下來回報，不會無限重試 |
+| 檔案上限 | 一次改超過 10 個檔案要先回報 |
+| 套件上限 | 一次裝超過 5 個套件要先回報 |
+| 禁止刪檔 | 除非架構文件明確要求 |
+| 漸進啟動 | 每個階段做完 Lead 檢查過才開下一個 |
+| 自動壓縮 | 階段之間自動壓縮 context，省 token |
+| 輸出過濾 | 測試和建置的輸出自動裁切 |
+
+---
+
+## 知識累積
+
+每次跑完 `/team` 會自動把這次的架構決策、踩過的坑、解法模式存到 `~/.claude/knowledge/`。下次開工會自動讀，不用重新探索。
+
+另外會存一份 JSONL 格式的訓練資料，以後可以拿去 fine-tune 自己的模型。
+
+---
+
+## 要求
+
+- [Claude Code CLI](https://claude.ai)
+- Claude Max 方案（建議，五個 Opus 同時跑很吃額度）
+- git、jq
+
+---
+
+## 多少錢
+
+每次 `/team` 大約是平常用 Claude Code 的 5 倍 token。中型功能大概 $5-15 美金。想省的話可以把 agent 的 model 從 `opus` 改成 `sonnet`，省約 40%。
 
 ---
 
 ## 常見問題
 
-**花多少錢？**
-每次 `/team` 大約是單一 session 的 5 倍 token。中型功能大概 $5-15。Max 方案 $200/月，密集用大約撐 2-3 天全團隊作業。
-
-**可以用 Sonnet 省錢嗎？**
-可以。改 `~/.claude/agents/*.md` 裡的 `model: opus` 成 `model: sonnet`，省約 40%，推理品質會降一些。
-
-**有現成 code 也能用嗎？**
-能。架構師會先讀你的 codebase 再設計，不會砍掉重練。
+**有現成的專案也能用嗎？**
+可以。架構師會先讀你的 code 再設計，不會砍掉重練。
 
 **Agent 卡住怎麼辦？**
-三振出局機制會接管。同一件事失敗 3 次，agent 自動停止回報。不會無限迴圈燒錢。
+三振出局會接管，不會無限燒錢。
 
 **知識存在哪？**
-`~/.claude/knowledge/`。全在你的電腦上，不會外傳。下次打 `/team` 自動讀取。
+`~/.claude/knowledge/`，全在你電腦上。
 
 ---
 
