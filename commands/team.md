@@ -217,10 +217,12 @@ Lead 先檢查 Figma MCP 是否可用（嘗試呼叫 figma MCP 工具）。
 
 **Phase 2 快速模式（小功能或趕時間）：**
 如果使用者說「快一點」或功能很小，Lead 可以只跑 Step 1（設計系統）+ 跳過 Figma，直接用 `/design-shotgun` 自動生成設計變體。
+（`/design-shotgun` 不可用時：跳過設計稿生成，前端 agent 直接從 DESIGN.md 開始開發）
 但 Lead 要明確告訴使用者：「跳過 Figma Make，UI 品質會降。」
 
 **完全不用 Figma 的 fallback：**
 如果使用者不用 Figma 或沒有帳號，Lead 自動走 `/design-shotgun` → `/design-html` 路線（全自動，不需要使用者操作 Figma）。
+（兩個 skill 都不可用時：跳過整個設計稿環節，前端 agent 從 DESIGN.md 的設計系統直接開發）
 
 ---
 
