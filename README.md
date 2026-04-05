@@ -22,6 +22,8 @@ Type `/team`, say what you want, five Opus agents build it simultaneously.
 
 # English
 
+> **License:** Apache 2.0 (commercial use allowed) | **CI:** 6 automated jobs ([view pipeline](https://github.com/XingCEO/superstar-team/actions)) | **Dependencies:** All 7 external skills pinned to verified commit hashes | **Quality gates:** 8, including hard tool checks (tsc, eslint, npm audit)
+
 ## Demo: "Build a snack review app"
 
 One `/team` command produced this — no manual design work, no hand-written CSS.
@@ -258,6 +260,8 @@ Full-stack web apps, pure API/CLI, frontend-only, marketing sites, refactoring, 
 ---
 
 # 繁體中文
+
+> **授權：** Apache 2.0（可商用）| **CI：** 6 個自動化 job（[查看](https://github.com/XingCEO/superstar-team/actions)）| **依賴：** 7 個外部 skill 全鎖定 commit hash | **品質閘門：** 8 道，含硬性工具檢查（tsc、eslint、npm audit）
 
 ## 成品展示：「做一個小吃評價 app」
 
