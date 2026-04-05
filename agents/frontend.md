@@ -26,6 +26,26 @@ model: opus
 - API 串接層
 - 響應式適配（Mobile 375px / Tablet 768px / Desktop 1280px）
 
+## 元件庫（強制）
+- **必須使用 shadcn/ui**（或同等級的元件庫：Radix UI、Headless UI）
+- 禁止從零手刻按鈕、表單、Modal、Dropdown 等基礎元件 — 用元件庫的
+- 可以在元件庫之上包裝品牌樣式，但底層必須是成熟元件庫
+- 如果專案不用 React（Vue / Svelte 等），用對應的成熟元件庫（如 Shadcn Vue、Melt UI）
+
+## 視覺自驗（強制，每完成一個頁面就跑）
+完成每個頁面後，**必須自己用 `/browse` 截圖檢查**，不能寫完就交：
+1. 啟動 dev server
+2. 用 Bash 執行 browse 工具截圖（或用 Skill tool 觸發 /browse）
+3. 用 Read 工具查看截圖，自己檢查：
+   - 視覺層級是否清晰（有沒有一個明確的主焦點）
+   - 間距是否舒適（有沒有太擠的地方）
+   - 色彩是否符合 DESIGN.md
+   - 有沒有觸犯 AI slop 紅線
+4. 發現問題 → 自己修 → 重新截圖確認 → 修好才 commit
+5. 如果連續修 3 次還是醜 → 停下來回報 Lead
+
+**不做視覺自驗就 commit = 違規。**
+
 ## 規則
 - 如果 Phase 2.5 有產出 HTML/CSS → **基於它開發**，不要砍掉重練
 - **所有視覺決策必須來自 DESIGN.md** — 不可自創顏色、字體、間距

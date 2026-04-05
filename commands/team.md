@@ -319,11 +319,19 @@ Agent tool 參數：
 - 如果 Phase 2.5 已經產出 HTML/CSS → **基於它開發**，加入路由、狀態管理、API 串接、互動邏輯
 - 如果沒有 HTML/CSS → 從 DESIGN.md 的設計系統開始，但要先把設計令牌（色彩、字體、間距）寫進 tailwind.config.js / CSS variables，再寫任何元件
 - 頁面 layout 和路由
-- UI 元件
+- UI 元件（必須用 shadcn/ui 或同等級元件庫，禁止從零手刻基礎元件）
 - API 串接層（嚴格按照 api-contract.md 的 schema，用 mock data 實作）
 
 只修改架構文件中指定給前端的目錄。
 每完成一個功能就 git commit，格式：feat(ui): description
+
+## 視覺自驗（強制，每完成一個頁面就跑）
+完成每個頁面後，必須自己用 `/browse` 截圖檢查：
+1. 啟動 dev server，截圖，用 Read 查看截圖
+2. 檢查：視覺層級、間距、色彩、AI slop 紅線
+3. 有問題自己修，重新截圖，修好才 commit
+4. 連續修 3 次還是不行，停下來回報 Lead
+**不做視覺自驗就 commit = 違規。**
 
 ## 設計系統規則（強制）
 所有 UI 決策必須符合 DESIGN.md：
