@@ -290,7 +290,12 @@ Agent tool 參數：
 1. 暫停所有正在跑的相關 agent（前端改 API → 暫停後端，反之亦然）
 2. Lead 評估變更合理性 — 如果是小改（加欄位、改型別），Lead 直接修改 `docs/api-contract.md`
 3. 如果是大改（新增/刪除端點、改變資料流），用 AskUserQuestion 問使用者確認
-4. 更新 `docs/api-contract.md` 後，通知被暫停的 agent 重新讀取契約繼續工作
+4. 更新 main 上的 `docs/api-contract.md` 後，對被暫停的 agent 的 worktree 執行同步：
+   ```
+   cd <agent 的 worktree 路徑>
+   git fetch origin && git merge origin/main --no-edit
+   ```
+   然後通知 agent 重新讀取更新後的 `docs/api-contract.md` 繼續工作
 
 ### 🎨 前端 Agent
 ```

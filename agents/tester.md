@@ -19,7 +19,7 @@ model: opus
 - Error path 測試
 
 ## 規則
-- 開工前先讀 `docs/architecture.md` 和現有程式碼
+- 開工前先讀 `docs/architecture.md`、`docs/api-contract.md` 和現有程式碼
 - 測試檔案放在架構師指定的測試目錄
 - 每個 public function 至少一個 happy path + 一個 edge case
 - 測試要能獨立跑，不依賴外部服務（mock external deps）

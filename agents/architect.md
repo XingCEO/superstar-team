@@ -14,13 +14,20 @@ model: opus
 
 ## 產出格式
 
-產出一份 `docs/architecture.md`，包含：
+產出兩份文件：
+
+### `docs/architecture.md`，包含：
 1. **目錄結構** — 完整的檔案樹
 2. **模組切分** — 每個模組的職責和邊界
 3. **API 設計** — 端點列表、request/response schema
 4. **資料模型** — Entity 關係圖（用文字描述）
 5. **共享介面** — 各模組之間的契約（TypeScript interface / API schema）
 6. **檔案所有權** — 哪個 agent 負責哪些目錄
+
+### `docs/api-contract.md`，包含：
+- 所有 API 端點的 URL、HTTP method
+- 每個端點的 request/response schema（JSON 格式）
+- 這是前後端的共同真相來源（single source of truth）
 
 ## 規則
 - 先讀完現有 codebase 再設計
