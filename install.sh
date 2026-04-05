@@ -47,10 +47,16 @@ else
   echo "    git clone https://github.com/garrytan/gstack.git ~/.claude/skills/gstack"
   echo "    cd ~/.claude/skills/gstack && ./setup"
   echo ""
-  read -r -p "  要繼續安裝 Superstar Team 嗎？(Y/n) " answer
-  if [[ "$answer" =~ ^[Nn] ]]; then
-    echo "已取消。請先安裝 gstack 再重跑 install.sh。"
-    exit 0
+  if [ -t 0 ]; then
+    # Interactive terminal — ask user
+    read -r -p "  要繼續安裝 Superstar Team 嗎？(Y/n) " answer
+    if [[ "$answer" =~ ^[Nn] ]]; then
+      echo "已取消。請先安裝 gstack 再重跑 install.sh。"
+      exit 0
+    fi
+  else
+    # Non-interactive (CI, pipe) — continue silently
+    echo -e "  ${YELLOW}⚠${NC}  非互動模式，自動繼續安裝"
   fi
 fi
 
