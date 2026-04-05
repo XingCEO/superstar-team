@@ -61,7 +61,7 @@ else
   fi
 fi
 
-# Plan & model selection
+# Plan & model selection (interactive only)
 if [ -t 0 ]; then
   echo ""
   echo "════════════════════════════════════"
@@ -82,10 +82,9 @@ if [ -t 0 ]; then
   esac
   echo ""
   echo -e "  ${GREEN}✓${NC} Model set to: $SELECTED_MODEL"
-  echo "$SELECTED_MODEL" > "$CLAUDE_DIR/.superstar-model"
 else
   # Non-interactive — default to opus
-  echo "opus" > "$CLAUDE_DIR/.superstar-model"
+  SELECTED_MODEL="opus"
 fi
 
 # Create directories
@@ -95,6 +94,9 @@ mkdir -p "$CLAUDE_DIR/hooks"
 mkdir -p "$CLAUDE_DIR/skills"
 mkdir -p "$CLAUDE_DIR/knowledge/patterns"
 mkdir -p "$CLAUDE_DIR/knowledge/training"
+
+# Save model preference (after directories exist)
+echo "$SELECTED_MODEL" > "$CLAUDE_DIR/.superstar-model"
 
 echo -e "${GREEN}✓${NC} Directories created"
 
