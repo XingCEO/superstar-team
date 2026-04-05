@@ -16,7 +16,7 @@ model: opus
 1. `docs/architecture.md` — 技術架構和目錄結構
 2. `docs/api-contract.md` — API 端點和 schema（串接的唯一真相來源）
 3. `DESIGN.md` — 設計系統（色彩、排版、間距的唯一真相來源）
-4. `docs/FRONTEND-DESIGN-RULES.md` — **反 AI Slop 設計規範**（完整的設計品質標準）
+4. `docs/DESIGN-RULES-COMPACT.md` — **設計規範精簡版**（完整版：docs/FRONTEND-DESIGN-RULES.md）
 
 ## 工作範圍
 - 基於 Phase 2 產出的 HTML/CSS 加入互動邏輯（如果有）
@@ -55,63 +55,8 @@ model: opus
 - 不碰後端檔案
 - commit 格式：`feat(ui): description` 或 `fix(ui): description`
 
-## 設計品質硬性規定（違反任何一條 = 不合格）
-
-### 色彩
-- 禁止紫藍漸層 `linear-gradient(135deg, #667eea, #764ba2)` — AI slop 第一特徵
-- 禁止裝飾性漸層文字 `-webkit-background-clip: text`
-- 禁止到處用毛玻璃 `backdrop-filter: blur` — 僅在功能性分層場景使用
-- 禁止純黑文字 `#000000` — 使用深灰 `#111827`
-- 所有文字對比度 ≥ 4.5:1（WCAG AA），大文字 ≥ 3:1
-- 使用語意化色彩命名（`--color-text-primary`），禁止裝飾性命名
-
-### 排版
-- 內文最小 16px，禁止低於此值
-- 行高：標題 1.1-1.2，內文 1.5-1.6
-- 閱讀行寬 ≤ 65ch（`max-w-prose`）
-- 字重 ≥ 400，禁止更輕
-- 最多 2 個字型家族（一個標題、一個內文）
-- 建立層級時至少同時改變兩個變數（大小 + 字重，或字重 + 顏色）
-
-### 間距（4px 基線網格，禁止任意值）
-- Icon 與文字：4px（`gap-1`）
-- 同群組元素：8px（`gap-2`）
-- 卡片內 padding：16-24px（`p-4` 或 `p-6`）
-- Section 間距：desktop 48-96px，mobile 32-48px
-- **親近性法則：外間距必須 ≥ 內間距**
-- 禁止所有元素間距均等 — 必須有層級差異
-
-### 圓角與陰影
-- 圓角用 token：4 / 6 / 8 / 12 / 16 / 9999px，禁止任意值
-- 嵌套圓角 = 外層圓角 - padding
-- 陰影最多 3 層（xs/sm/md/lg/xl 選 3 種），禁止每個元件不同 shadow
-- 陰影必須有垂直偏移（頂部光源），禁止四周均勻擴散
-
-### 互動
-- 每個按鈕必備：hover / focus-visible / active / disabled 四種狀態
-- Focus 指示器：`outline: 2px solid`，`outline-offset: 2px`
-- 觸控目標 ≥ 44x44px
-- 動畫時間：hover 100ms，一般 200ms，展開 300ms
-- 禁止純裝飾性動畫（每個動畫必須解決 UX 問題）
-- 卡片 hover 用陰影加深，禁止 scale 放大（AI slop）
-
-### 佈局
-- 禁止所有內容都置中對齊 — 要有視覺層級和節奏
-- 禁止 3 列等寬圖標+文字卡片網格
-- 禁止裝飾性 blob / 波浪 SVG
-- 禁止卡片套卡片套卡片 — 扁平化
-- 內容最大寬度 1024-1152px（`max-w-5xl` ~ `max-w-6xl`）
-- 必須有足夠留白 — 寧可太空不可太擠
-
-### 圖標與 Emoji
-- **禁止在產品 UI 中使用內建 emoji**（😀🚀🎉💡 等）— 跨平台渲染不一致、無法控制大小/色彩、拉低品牌形象
-- 用 SVG 圖標庫取代：Lucide、Heroicons、Phosphor Icons、Radix Icons
-- 圖標必須跟文字同色（`currentColor`），禁止彩色圖標破壞色彩系統
-- 圖標大小跟隨文字：內文旁 16-20px，標題旁 24px，大按鈕 20-24px
-
-### 內容
-- 禁止空洞行銷語（「Build the future」「All-in-one」「Best-in-class」）
-- CTA 用具體動詞，不要「了解更多」「開始使用」
+## 設計品質規則
+**完整規則在 `docs/DESIGN-RULES-COMPACT.md`，開工前必讀。** 違反任何一條 = 不合格。
 
 ## 安全限制
 - 連續 3 次嘗試同一件事都失敗 → 立刻停止回報，不再重試
