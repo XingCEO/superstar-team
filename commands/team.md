@@ -769,23 +769,15 @@ YYYY-MM-DD
 - 用繁體中文溝通
 - 如果任何 agent 回報問題，先暫停其他相關 agent，解決後再繼續
 
-## 模型分配（強制）
+## 模型分配
 
-預設全員 Opus。使用者可以在對話開始時說「用 Sonnet」來降級省成本。
-
-| 角色 | 預設 model | 可降級 |
-|------|-----------|:------:|
-| 架構師 | `"opus"` | 不建議（架構品質影響全局） |
-| 後端 | `"opus"` | 可以 → `"sonnet"` |
-| 前端 | `"opus"` | 可以 → `"sonnet"` |
-| 測試 | `"opus"` | 可以 → `"sonnet"` |
-| 安全 | `"opus"` | 可以 → `"sonnet"` |
+預設全員 Opus。使用者可以自由選擇任何 agent 的模型。
 
 **模型選擇邏輯：**
 1. 使用者沒說 → 全員 `"opus"`
-2. 使用者說「用 Sonnet」或「省一點」 → 架構師維持 `"opus"`，其他 4 個改 `"sonnet"`
-3. 使用者指定特定 agent 用什麼 → 照做
-4. **每次呼叫 Agent tool 必須帶 model 參數，不帶 = 違規**
+2. 使用者說「用 Sonnet」或「省一點」 → 全部改 `"sonnet"`
+3. 使用者指定特定 agent 用什麼 → 照做（例：「架構師用 Opus，其他用 Sonnet」）
+4. **每次呼叫 Agent tool 必須帶 model 參數**
 
 如果使用者的功能很小，不需要 5 個 agent，減少到 2-3 個就好。
 
@@ -831,16 +823,17 @@ guardrail.sh hook 在程式碼層面強制執行。不需要額外加。
 
 **每一步之間 Lead 都要檢查結果，不要盲目往下開。**
 
-### 6. Token 自動節省（Lead 必須執行，使用者不用管）
+### 6. Context 管理（建議，不強制）
 
-**Phase 之間自動清理：**
-- Phase 2（設計）+ Phase 3（架構）完成後，Lead 執行 `/compact` 壓縮探索過程，只保留 DESIGN.md + architecture.md + api-contract.md
-- Phase 4（開發）每個 agent 回來後，Lead 執行 `/compact` 壓縮 agent 的完整回報，只保留摘要
-- Phase 5（整合）開始前，如果 context 已經很大，Lead 執行 `/compact` 再繼續
+如果對話 context 變大，Lead **可以建議**使用者執行 `/compact`，但不自行決定壓縮。
+使用者可能有自己的 compact 偏好（有人關掉 auto compact，有人喜歡保留完整紀錄）。
 
-**Agent prompt 精簡規則：**
-每個 agent 的 prompt 已經內建安全限制和回報格式（≤ 500 字），不需要額外加。
-如果 Lead 臨時需要自訂 agent prompt，記得加上回報字數限制。
+**Lead 可以提示的時機（不是強制）：**
+- Phase 2 + 3 結束後、Phase 4 開始前
+- 每個 agent 回來後
+- context 明顯很大時
+
+**提示方式：** 「context 有點大了，要不要我跑一下 /compact？」讓使用者決定。
 
 **Lead 自己的行為規則：**
 - 給使用者的進度報告也要精簡：結論先行，細節按需展開
