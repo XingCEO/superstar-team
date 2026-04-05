@@ -85,49 +85,58 @@ echo -e "${YELLOW}安裝 Skills...${NC}"
 clone_skill() {
   local repo=$1
   local dir=$2
+  local pin=$3  # commit hash to pin (optional)
   if [ ! -d "$CLAUDE_DIR/skills/$dir" ]; then
-    git clone --depth 1 "https://github.com/$repo.git" "$CLAUDE_DIR/skills/$dir" 2>/dev/null
-    echo -e "  ${GREEN}✓${NC} $repo"
+    git clone --depth 50 "https://github.com/$repo.git" "$CLAUDE_DIR/skills/$dir" 2>/dev/null
+    if [ -n "$pin" ]; then
+      (cd "$CLAUDE_DIR/skills/$dir" && git checkout "$pin" --quiet 2>/dev/null)
+    fi
+    echo -e "  ${GREEN}✓${NC} $repo${pin:+ @ ${pin:0:7}}"
   else
     echo -e "  ⏭️  $dir（已存在）"
   fi
 }
 
+# ═══════════════════════════════════
+# Skill 版本鎖定（最後驗證日：2026-04-05）
+# 更新方式：改 hash 後重跑 install.sh（需先刪 ~/.claude/skills/<dir>）
+# ═══════════════════════════════════
+
 # obra — Git 工作流
-clone_skill "obra/superpowers" "obra-superpowers"
+clone_skill "obra/superpowers" "obra-superpowers" "b7a8f76"
 for s in using-git-worktrees finishing-a-development-branch verification-before-completion dispatching-parallel-agents; do
   ln -sf "$CLAUDE_DIR/skills/obra-superpowers/skills/$s" "$CLAUDE_DIR/skills/$s" 2>/dev/null
 done
 
 # PlanetScale — 資料庫
-clone_skill "planetscale/database-skills" "planetscale-db"
+clone_skill "planetscale/database-skills" "planetscale-db" "b156f4c"
 for s in mysql postgres; do
   ln -sf "$CLAUDE_DIR/skills/planetscale-db/skills/$s" "$CLAUDE_DIR/skills/planetscale-$s" 2>/dev/null
 done
 
 # Addy Osmani — Web 品質
-clone_skill "addyosmani/web-quality-skills" "addy-web-quality"
+clone_skill "addyosmani/web-quality-skills" "addy-web-quality" "fed9617"
 for s in accessibility best-practices core-web-vitals performance seo web-quality-audit; do
   ln -sf "$CLAUDE_DIR/skills/addy-web-quality/skills/$s" "$CLAUDE_DIR/skills/addy-$s" 2>/dev/null
 done
 
 # Trail of Bits — 安全
-clone_skill "trailofbits/skills" "trailofbits-security"
+clone_skill "trailofbits/skills" "trailofbits-security" "d7f76b5"
 for s in supply-chain-risk-auditor differential-review insecure-defaults modern-python second-opinion; do
   ln -sf "$CLAUDE_DIR/skills/trailofbits-security/plugins/$s/skills/$s" "$CLAUDE_DIR/skills/tob-$s" 2>/dev/null
 done
 
 # Compound Engineering — 學習迴圈
-clone_skill "EveryInc/compound-engineering-plugin" "compound-engineering"
+clone_skill "EveryInc/compound-engineering-plugin" "compound-engineering" "b223e39"
 for s in ce-compound ce-ideate ce-plan ce-review ce-work; do
   ln -sf "$CLAUDE_DIR/skills/compound-engineering/plugins/compound-engineering/skills/$s" "$CLAUDE_DIR/skills/$s" 2>/dev/null
 done
 
 # Excalidraw — 架構圖
-clone_skill "coleam00/excalidraw-diagram-skill" "excalidraw-diagram"
+clone_skill "coleam00/excalidraw-diagram-skill" "excalidraw-diagram" "8646fcc"
 
 # Vercel — UI 審計
-clone_skill "vercel-labs/agent-skills" "vercel-skills"
+clone_skill "vercel-labs/agent-skills" "vercel-skills" "73140fc"
 ln -sf "$CLAUDE_DIR/skills/vercel-skills/skills/web-design-guidelines" "$CLAUDE_DIR/skills/vercel-web-design" 2>/dev/null
 
 echo -e "${GREEN}✓${NC} Skills 安裝完成"
