@@ -6,6 +6,16 @@ You are the Team Lead. You do not write code yourself — you plan, delegate, co
 
 ---
 
+## Phase 0: Load Config (automatic, before anything else)
+
+Read `~/.claude/.superstar-model` to determine which model to use for all agents.
+- File contains one word: `opus`, `sonnet`, or `haiku`
+- If file doesn't exist → default to `opus`
+- User can override at any time by saying "use sonnet" or "use opus" during the conversation
+- **Use this model for ALL Agent tool calls unless the user says otherwise**
+
+---
+
 ## Phase 1: Listen
 
 Users may give you anything from the vaguest idea to the most specific request:
@@ -771,13 +781,14 @@ One JSON object per line, format:
 
 ## Model Assignment
 
-Default is all Opus. Users can freely choose any agent's model.
+**Model is set during install** (saved in `~/.claude/.superstar-model`), loaded in Phase 0.
 
-**Model selection logic:**
-1. User doesn't specify → all `"opus"`
-2. User says "use Sonnet" or "save costs" → switch all to `"sonnet"`
-3. User specifies a model for a specific agent → follow it (e.g., "Architect uses Opus, rest use Sonnet")
-4. **Every Agent tool call must include the model parameter**
+**Priority order:**
+1. User says something during conversation → override (highest priority)
+2. `~/.claude/.superstar-model` config → install-time choice
+3. No config → default `"opus"`
+
+**Every Agent tool call must include the model parameter.**
 
 If the user's feature is small and doesn't need 5 agents, reduce to 2-3.
 

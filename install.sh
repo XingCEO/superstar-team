@@ -61,6 +61,33 @@ else
   fi
 fi
 
+# Plan & model selection
+if [ -t 0 ]; then
+  echo ""
+  echo "════════════════════════════════════"
+  echo "  Model Configuration"
+  echo "════════════════════════════════════"
+  echo ""
+  echo "  Which model should /team agents use?"
+  echo ""
+  echo "  1) opus    — Best quality, highest cost     (recommended for Max plan)"
+  echo "  2) sonnet  — Good quality, moderate cost    (recommended for Pro plan)"
+  echo "  3) haiku   — Fast & cheap, basic quality    (recommended for light tasks)"
+  echo ""
+  read -r -p "  Choose [1/2/3] (default: 1): " model_choice
+  case "$model_choice" in
+    2) SELECTED_MODEL="sonnet" ;;
+    3) SELECTED_MODEL="haiku" ;;
+    *) SELECTED_MODEL="opus" ;;
+  esac
+  echo ""
+  echo -e "  ${GREEN}✓${NC} Model set to: $SELECTED_MODEL"
+  echo "$SELECTED_MODEL" > "$CLAUDE_DIR/.superstar-model"
+else
+  # Non-interactive — default to opus
+  echo "opus" > "$CLAUDE_DIR/.superstar-model"
+fi
+
 # Create directories
 mkdir -p "$CLAUDE_DIR/agents"
 mkdir -p "$CLAUDE_DIR/commands"
