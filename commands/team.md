@@ -129,64 +129,75 @@
 
 **使用者確認設計系統後進 Step 2。**
 
-### Step 2：頁面設計稿（兩條路徑，Lead 問使用者選哪條）
+### Step 2：頁面設計稿（Figma Make 生成）
 
-Lead 用 AskUserQuestion 問使用者：
+Lead 根據 DESIGN.md + 產品需求 + docs/architecture.md（如果已有），為每個主要頁面生成一段 **Figma Make prompt**。
 
+**Prompt 生成規則：**
+- 每個頁面一段獨立 prompt
+- 包含：頁面用途、主要元素、佈局方向、色彩（引用 DESIGN.md 的 hex 值）、字型、間距密度
+- 包含反面指令：「不要使用紫色漸層、不要 3 列圖標卡片、不要居中所有東西」
+- 風格要具體：「像 Linear 的側邊欄」比「現代簡約風」有用 100 倍
+
+**範例 prompt（給使用者參考）：**
 ```
-設計系統確認了。接下來頁面設計稿要怎麼做？
-
-A) 用 Figma — 我幫你把設計規格推到 Figma，你用 Figma AI (Make) 生成頁面設計，調到滿意後我讀回來寫 code（品質最高）
-B) 自動生成 — 我直接用 /design-shotgun 生成設計變體給你選（速度最快）
-```
-
-#### 路徑 A：Figma 整合（品質最高）
-
-**Step 2A-1：推送設計規格到 Figma**
-
-Lead 用 Figma MCP 工具把 DESIGN.md 的設計系統推送到 Figma：
-- 用 `use_figma` 建立新檔案，設定色彩 variables、字型 styles、間距 tokens
-- 用 `generate_figma_design` 把設計系統的預覽元件推到 Figma
-- 告訴使用者：「設計系統已推到 Figma，你可以在 Figma 裡用 AI (Make) 生成頁面設計了。」
-
-**Step 2A-2：使用者在 Figma 操作**
-
-使用者在 Figma 裡：
-1. 用 Figma Make / AI 基於設計系統生成頁面
-2. 手動調整到滿意
-3. 完成後告訴 Lead：「設計好了」（或貼 Figma 連結）
-
-**Step 2A-3：從 Figma 讀回設計**（同 Step 4）
-
-Lead 用 Figma MCP 讀取使用者的設計：
-- 用 `get_figma_data` 讀取所有 frames、components、styles、variables
-- 擷取佈局結構、色彩、字型、間距的精確數值
-- 更新 DESIGN.md（如果 Figma 裡的值跟 DESIGN.md 有出入，以 Figma 為準）
-
-**進入 Step 3。**
-
-#### 路徑 B：自動生成（速度最快）
-
-```
-觸發：Skill tool → skill: "design-shotgun"
+一個小吃評價 app 的首頁。頂部導航列靠左 logo + 靠右搜尋框和登入按鈕。
+主區域左側是篩選面板（分類、評分、距離），右側是小吃卡片列表（2 欄網格）。
+每張卡片：頂部食物照片、下方店名（18px semibold）、評分星星、一句短評、價格。
+色彩：主色 #2563EB，背景 #FAFAFA，卡片白底，文字 #111827。
+字型：標題 DM Sans SemiBold，內文 DM Sans Regular。
+風格參考：像 Yelp 但更乾淨、像 Uber Eats 的卡片但不要那麼擁擠。
+不要：紫色漸層、裝飾性插圖、居中所有東西。
 ```
 
-設計槍探索會自動：
-1. 根據 DESIGN.md 和產品需求，產出 3-8 個頁面設計變體
-2. 開啟對比看板（HTTP 伺服器），使用者直接在瀏覽器上評分、標註
-3. 使用者選擇最喜歡的方向（或混合多個方向）
-4. 批准的設計存入 `approved.json`
+Lead 用 AskUserQuestion 把 prompt 列出來，告訴使用者：
 
-**進入 Step 3。**
+```
+我幫你生成了 Figma Make 的設計 prompt，請依序操作：
 
-### Step 3：設計轉 HTML
+1. 打開 Figma → 新檔案 → 點 Make（或 Figma AI）
+2. 貼上以下 prompt：
+
+📄 首頁：
+{prompt 內容}
+
+📄 詳情頁：
+{prompt 內容}
+
+📄 登入頁：
+{prompt 內容}
+
+3. 每個頁面生成後，不滿意就按 Regenerate 或自己微調
+4. 全部滿意後跟我說「設計好了」，或貼 Figma 檔案連結給我
+```
+
+**使用者說「設計好了」後進 Step 3。**
+**如果使用者對某個頁面不滿意** → Lead 根據反饋調整 prompt，使用者再貼進 Figma Make 重新生成。
+
+### Step 3：從 Figma 讀回設計 + 轉 HTML
+
+**Step 3a：讀取 Figma 設計**
+
+Lead 先檢查 Figma MCP 是否可用（嘗試呼叫 figma MCP 工具）。
+
+**有 Figma MCP：**
+- 用 `get_figma_data` 讀取使用者的 Figma 檔案
+- 擷取所有 frames、components、styles、variables 的精確數值
+- 更新 DESIGN.md（以 Figma 實際值為準，覆蓋之前的提案值）
+
+**沒有 Figma MCP：**
+- 告訴使用者：「請把 Figma 連結貼給我，或者匯出設計截圖（每個頁面一張）。」
+- 如果使用者想裝 MCP：`claude mcp add --transport http figma https://mcp.figma.com/mcp`
+- 如果使用者給截圖：Lead 用 Read 工具看截圖，推斷佈局和設計決策
+
+**Step 3b：轉 HTML**
 
 ```
 觸發：Skill tool → skill: "design-html"
 ```
 
 設計最終化會自動：
-1. 把設計稿（Figma 讀回的 或 design-shotgun 批准的）轉成生產品質的 HTML/CSS
+1. 把 Figma 讀回的設計轉成生產品質的 HTML/CSS
 2. 開啟實時預覽伺服器，在三個視口（mobile/tablet/desktop）截圖驗證
 3. 最多 10 輪迭代打磨細節
 4. 產出的 HTML/CSS 成為前端 agent 的**起點**（不是從空白開始）
@@ -198,17 +209,16 @@ Lead 用 Figma MCP 讀取使用者的設計：
 如果使用者一開始就給了 Figma 連結（跳過 Step 1-2），Lead 直接：
 1. 用 Figma MCP 的 `get_figma_data` 讀取整個設計
 2. 擷取設計 tokens → 自動產出 DESIGN.md
-3. 擷取頁面佈局 → 直接進 Step 3 轉 HTML
+3. 擷取頁面佈局 → 直接進 Step 3b 轉 HTML
 
 ---
 
 **Phase 2 快速模式（小功能或趕時間）：**
-如果使用者說「快一點」或功能很小，Lead 可以只跑 Step 1（設計系統），跳過 Step 2-3。
-但 Lead 要明確告訴使用者：「跳過設計稿，UI 品質會降。」
+如果使用者說「快一點」或功能很小，Lead 可以只跑 Step 1（設計系統）+ 跳過 Figma，直接用 `/design-shotgun` 自動生成設計變體。
+但 Lead 要明確告訴使用者：「跳過 Figma Make，UI 品質會降。」
 
-**Figma MCP 前置條件：**
-使用路徑 A 或 Step 4 前，Lead 先檢查 Figma MCP 是否可用（嘗試呼叫任何 figma MCP 工具）。
-不可用 → 告訴使用者：「Figma MCP 未設定，請先跑 `claude mcp add --transport http figma https://mcp.figma.com/mcp`。或選路徑 B。」
+**完全不用 Figma 的 fallback：**
+如果使用者不用 Figma 或沒有帳號，Lead 自動走 `/design-shotgun` → `/design-html` 路線（全自動，不需要使用者操作 Figma）。
 
 ---
 
