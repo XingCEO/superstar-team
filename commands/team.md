@@ -119,13 +119,52 @@ Agent tool 參數：
 你覺得 OK 嗎？有想改的直接說。
 ```
 
-**使用者說 OK 才進入 Phase 3。使用者想改就讓架構師重來。**
+**使用者說 OK 才進入 Phase 2.5。使用者想改就讓架構師重來。**
+
+---
+
+## Phase 2.5：設計系統（有前端就必跑，純 API / CLI 跳過）
+
+**判斷邏輯：** 如果本次需求會啟動前端 agent（全端 Web app、純前端、靜態站），就必須跑這步。純 API / CLI / 後端服務跳過。
+
+架構確認後，Lead 用 Skill tool 啟動設計諮詢：
+
+```
+觸發：Skill tool → skill: "design-consultation"
+```
+
+設計諮詢會：
+1. 根據產品需求和架構，研究適合的設計方向
+2. 產出 `DESIGN.md` — 完整設計系統，包含：
+   - 美學方向（風格名稱、修飾程度、氛圍）
+   - 排版（展示字體、正文字體、模塊化標度）
+   - 色彩系統（主色、副色、中立色、語義色、深色模式）
+   - 間距系統（基礎單位、密度、標度）
+   - 佈局（柵欄、最大寬度、圓角標度）
+   - 動畫（緩動、時長）
+3. 產出字體 + 色彩預覽頁面
+
+設計諮詢完成後，Lead 將設計系統摘要展示給使用者確認：
+
+```
+🎨 設計系統推薦：
+
+美學方向：{方向名} — {一句話}
+排版：{字體} — {為什麼}
+色彩：{主色 + 副色} — {為什麼}
+
+你覺得 OK 嗎？有想改的直接說。
+```
+
+**使用者說 OK 才進入 Phase 3。使用者想改就重跑設計諮詢。**
+
+**如果使用者已經有 DESIGN.md 或設計稿：** 跳過設計諮詢，直接用現有的。
 
 ---
 
 ## Phase 3：平行開工
 
-使用者確認架構後，Lead 根據 docs/architecture.md 判斷需要哪些 agent：
+使用者確認架構和設計後，Lead 根據 docs/architecture.md 判斷需要哪些 agent：
 
 | 專案類型 | 啟動誰 |
 |----------|--------|
@@ -196,14 +235,28 @@ Agent tool 參數：
   prompt: （以下內容）
 ```
 ```
-你是前端工程師。讀 docs/architecture.md 和 docs/api-contract.md，實作以下內容：
-- 專案初始化
+你是前端工程師。開工前必讀以下文件：
+1. docs/architecture.md — 技術架構和目錄結構
+2. docs/api-contract.md — API 端點和 schema
+3. DESIGN.md — 設計系統（**必讀，所有視覺決策必須符合此文件**）
+
+實作以下內容：
+- 專案初始化（使用 DESIGN.md 指定的字體、色彩設定 tailwind.config / CSS variables）
 - 頁面 layout 和路由
-- UI 元件
+- UI 元件（嚴格按照 DESIGN.md 的色彩、排版、間距、圓角）
 - API 串接層（嚴格按照 api-contract.md 的 schema，用 mock data 實作）
 
 只修改架構文件中指定給前端的目錄。
 每完成一個功能就 git commit，格式：feat(ui): description
+
+## 設計系統規則（強制）
+所有 UI 決策必須符合 DESIGN.md：
+- 色彩：只使用 DESIGN.md 定義的顏色，不可自創新色
+- 字體：使用 DESIGN.md 指定的字體和大小標度
+- 間距：使用 DESIGN.md 定義的間距系統
+- 圓角、陰影、邊框：按 DESIGN.md 定義
+- 動畫：按 DESIGN.md 的緩動和時長
+- 如果 DESIGN.md 沒有覆蓋某個視覺決策 → 停下來回報 Lead，不要自行決定
 
 ## API 契約規則
 - 嚴格按照 docs/api-contract.md 的端點、method、schema 串接
@@ -222,8 +275,9 @@ Agent tool 參數：
 回報時只包含以下內容，不要回報探索過程：
 1. 完成了什麼（列表，每項一行）
 2. 新增/修改的檔案清單
-3. 測試結果（通過/失敗數字）
-4. 遇到的問題（如果有）
+3. 設計合規：確認所有色彩/字體/間距都來自 DESIGN.md（是/否，有例外就列出）
+4. 測試結果（通過/失敗數字）
+5. 遇到的問題（如果有）
 禁止回報：讀了哪些檔案、嘗試了哪些方法、中間的思考過程。
 ```
 
@@ -346,8 +400,9 @@ Agent tool 參數：
 觸發：Skill tool → skill: "design-review"
 判斷：只在 Phase 3 有啟動前端 agent 時觸發。純 API / CLI 專案跳過。
 ```
-視覺一致性、spacing、hierarchy、a11y。
+對照 DESIGN.md 檢查：色彩是否符合調色板、字體是否按標度、間距是否一致、視覺層級、a11y。
 （Addy Osmani a11y + Vercel web-design skills 會自動介入）
+如果發現大量設計違規（>5 處） → 通知使用者，建議重跑 Phase 2.5 修正設計系統或前端實作。
 
 ### 5.5 健康檢查
 ```
