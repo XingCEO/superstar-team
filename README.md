@@ -21,6 +21,23 @@ Type `/team`, say what you want, five Opus agents build it simultaneously.
 
 # English
 
+## Demo: "Build a snack review app"
+
+One `/team` command produced this — no manual design work, no hand-written CSS.
+
+![Desktop Demo](docs/screenshots/demo-desktop.png)
+
+<details>
+<summary>Mobile version</summary>
+
+![Mobile Demo](docs/screenshots/demo-mobile.png)
+
+</details>
+
+**What you see:** DM Sans typography, 4px baseline grid spacing, semantic color system, shadcn/ui components, zero emoji icons, zero purple gradients, zero 3-column icon grids. Every rule from the [515-line design spec](docs/FRONTEND-DESIGN-RULES.md) enforced automatically.
+
+---
+
 ## What is this
 
 A set of Claude Code config files. After installation, type `/team` and it will:
@@ -235,6 +252,16 @@ Full-stack web apps, pure API/CLI, frontend-only, marketing sites, refactoring, 
 ---
 
 # 繁體中文
+
+## 成品展示：「做一個小吃評價 app」
+
+一個 `/team` 指令的產出 — 零手動設計、零手寫 CSS。
+
+![Desktop Demo](docs/screenshots/demo-desktop.png)
+
+DM Sans 字型、4px 基線網格、語意化色彩系統、shadcn/ui 元件庫。零 emoji 圖標、零紫色漸層、零三列卡片。[515 行設計規範](docs/FRONTEND-DESIGN-RULES.md)自動執行。
+
+---
 
 ## 這是什麼
 
