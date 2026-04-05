@@ -159,29 +159,83 @@ jobs:
       - name: Check all referenced files exist
         run: |
           FAIL=0
-          # Check agents referenced by install.sh exist in repo
           for agent in architect backend frontend tester security; do
             if [ ! -f "agents/$agent.md" ]; then
               echo "FAIL: agents/$agent.md referenced but missing"
               FAIL=1
             fi
           done
-          # Check commands referenced by install.sh exist in repo
           for cmd in team duo status; do
             if [ ! -f "commands/$cmd.md" ]; then
               echo "FAIL: commands/$cmd.md referenced but missing"
               FAIL=1
             fi
           done
-          # Check docs
-          if [ ! -f "docs/FRONTEND-DESIGN-RULES.md" ]; then
-            echo "FAIL: docs/FRONTEND-DESIGN-RULES.md missing"
-            FAIL=1
-          fi
-          # Check VERSION
-          if [ ! -f "VERSION" ]; then
-            echo "FAIL: VERSION file missing"
-            FAIL=1
-          fi
+          for doc in docs/FRONTEND-DESIGN-RULES.md VERSION CHANGELOG.md CONTRIBUTING.md; do
+            if [ ! -f "$doc" ]; then
+              echo "FAIL: $doc missing"
+              FAIL=1
+            fi
+          done
           echo "All referenced files exist"
+          exit $FAIL
+
+  install-smoke-test:
+    name: Install Smoke Test (Clean Environment)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install jq (required by hooks)
+        run: sudo apt-get install -y jq
+      - name: Mock claude CLI (install.sh checks for it)
+        run: |
+          sudo mkdir -p /usr/local/bin
+          echo '#!/bin/bash' | sudo tee /usr/local/bin/claude
+          echo 'echo "mock claude"' | sudo tee -a /usr/local/bin/claude
+          sudo chmod +x /usr/local/bin/claude
+      - name: Run install.sh (skip git clones with timeout)
+        run: |
+          # Run install with a timeout — skill clones may fail in CI (rate limits)
+          # but the core install (agents, commands, hooks, settings) should work
+          timeout 60 bash install.sh || true
+      - name: Verify core files were installed
+        run: |
+          FAIL=0
+          echo "=== Checking installed files ==="
+          # Check agents (symlinks)
+          for agent in architect backend frontend tester security; do
+            if [ -L "$HOME/.claude/agents/$agent.md" ]; then
+              echo "OK: agents/$agent.md (symlink)"
+            elif [ -f "$HOME/.claude/agents/$agent.md" ]; then
+              echo "OK: agents/$agent.md (file)"
+            else
+              echo "FAIL: agents/$agent.md not installed"
+              FAIL=1
+            fi
+          done
+          # Check commands (symlinks)
+          for cmd in team duo status; do
+            if [ -L "$HOME/.claude/commands/$cmd.md" ]; then
+              echo "OK: commands/$cmd.md (symlink)"
+            elif [ -f "$HOME/.claude/commands/$cmd.md" ]; then
+              echo "OK: commands/$cmd.md (file)"
+            else
+              echo "FAIL: commands/$cmd.md not installed"
+              FAIL=1
+            fi
+          done
+          # Check hooks
+          if [ -x "$HOME/.claude/hooks/filter-output.sh" ]; then
+            echo "OK: hooks/filter-output.sh (executable)"
+          else
+            echo "FAIL: hooks/filter-output.sh not installed or not executable"
+            FAIL=1
+          fi
+          # Check version file
+          if [ -f "$HOME/.claude/.superstar-version" ]; then
+            echo "OK: version $(cat "$HOME/.claude/.superstar-version")"
+          else
+            echo "FAIL: .superstar-version not created"
+            FAIL=1
+          fi
           exit $FAIL
