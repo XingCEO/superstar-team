@@ -90,7 +90,7 @@ jobs:
       - name: Check team.md phase numbering consistency
         run: |
           # Extract phase headers and verify they are in order
-          phases=$(grep "^## Phase" commands/team.md | sed 's/.*Phase \([0-9.]*\).*/\1/' | head -20)
+          phases=$(grep "^## Phase" commands/team.md | sed 's/^## Phase \([0-9.]*\)[：:].*/\1/' | head -20)
           echo "Phase order found:"
           echo "$phases"
           # Check no duplicate phase numbers
