@@ -35,7 +35,7 @@
 
 ### What We're NOT Looking For
 - Converting the system to a different orchestration framework (this is Claude Code native by design)
-- Adding non-Opus model defaults to /team (use /duo for cost-sensitive work)
+- Removing the model parameter requirement from Agent tool calls
 - Removing safety limits (they exist for good reasons)
 
 ## Code Style

@@ -130,24 +130,9 @@ echo -e "${GREEN}✓${NC} Commands 更新完成（symlink 模式）"
 # ═══════════════════════════════════
 
 echo "更新 Skills..."
-UPDATED=0
-for skill_dir in "$CLAUDE_DIR/skills"/*/; do
-  if [ -d "$skill_dir/.git" ]; then
-    name=$(basename "$skill_dir")
-    cd "$skill_dir"
-    result=$(git pull 2>&1 | head -1)
-    if [[ "$result" != *"Already up to date"* ]] && [[ "$result" != *"已經是最新的"* ]]; then
-      echo -e "  ${GREEN}✓${NC} $name 已更新"
-      UPDATED=$((UPDATED + 1))
-    fi
-    cd "$REPO_DIR"
-  fi
-done
-if [ $UPDATED -eq 0 ]; then
-  echo -e "  ${GREEN}✓${NC} 所有 Skills 已是最新"
-else
-  echo -e "${GREEN}✓${NC} $UPDATED 個 Skills 已更新"
-fi
+echo -e "  ${YELLOW}⚠${NC}  Skills 由 install.sh 鎖定到特定 commit hash，不做 git pull"
+echo -e "  ${YELLOW}⚠${NC}  如需更新 skills：刪除 ~/.claude/skills/<dir> 後重跑 install.sh"
+echo -e "  ${GREEN}✓${NC} Skills 版本鎖定完整（不更新以避免破壞鎖定）"
 
 # ═══════════════════════════════════
 # 寫入版本號和 repo 路徑

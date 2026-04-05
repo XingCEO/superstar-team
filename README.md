@@ -170,6 +170,8 @@ All running Opus with clear responsibilities and file boundaries. No stepping on
 
 Auto-loaded when relevant topics come up. Covers database optimization, web performance, accessibility, SEO, git workflows, security audits, diagram generation, and more. Full list in [install.sh](install.sh).
 
+> **Note:** Some skills referenced by `/team` (design-consultation, design-review, browse, ship, qa, cso, etc.) come from [gstack/xtools](https://github.com/garrytan/gstack) and must be installed separately. Superstar Team installs 7 community skill packs; the design/QA/shipping skills require the xtools runtime.
+
 ### 3 Commands
 
 | Command | Purpose |
@@ -234,7 +236,7 @@ Also saves JSONL training data (including design-related pairs) for future model
 
 ## Cost
 
-Each `/team` run uses roughly 5x normal Claude Code tokens. Medium features cost about $5-15. To save costs, just say "use Sonnet" when starting `/team` — the architect stays on Opus, other agents switch to Sonnet (~40% savings).
+Each `/team` run uses roughly 5x normal Claude Code tokens. Estimated cost: small features $3-8, medium $8-20, large $20-50+. To save costs, just say "use Sonnet" when starting `/team` — the architect stays on Opus, other agents switch to Sonnet (~40% savings).
 
 ---
 
@@ -472,7 +474,7 @@ cd superstar-team && ./update.sh    # 自動升級為 symlink 模式 + 更新 sk
 
 ## 多少錢
 
-每次 `/team` 大約是平常用 Claude Code 的 5 倍 token。中型功能大概 $5-15 美金。想省的話在啟動時說「用 Sonnet」，架構師維持 Opus，其他 agent 自動降為 Sonnet（省約 40%）。
+每次 `/team` 大約是平常用 Claude Code 的 5 倍 token。預估成本：小功能 $3-8、中型 $8-20、大型 $20-50+。想省的話在啟動時說「用 Sonnet」，架構師維持 Opus，其他 agent 自動降為 Sonnet（省約 40%）。
 
 ---
 
