@@ -1,0 +1,187 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  shellcheck:
+    name: Shell Script Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install shellcheck
+        run: sudo apt-get install -y shellcheck
+      - name: Lint install.sh
+        run: shellcheck -s bash install.sh
+      - name: Lint update.sh
+        run: shellcheck -s bash update.sh
+
+  agent-validation:
+    name: Agent Definition Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check all agents have required frontmatter
+        run: |
+          FAIL=0
+          for f in agents/*.md; do
+            name=$(basename "$f")
+            # Check frontmatter exists
+            if ! head -1 "$f" | grep -q "^---"; then
+              echo "FAIL: $name missing frontmatter (no --- header)"
+              FAIL=1
+            fi
+            # Check model field
+            if ! grep -q "^model:" "$f"; then
+              echo "FAIL: $name missing 'model:' field"
+              FAIL=1
+            fi
+            # Check tools field
+            if ! grep -q "^tools:" "$f"; then
+              echo "FAIL: $name missing 'tools:' field"
+              FAIL=1
+            fi
+            # Check description field
+            if ! grep -q "^description:" "$f"; then
+              echo "FAIL: $name missing 'description:' field"
+              FAIL=1
+            fi
+            echo "OK: $name"
+          done
+          exit $FAIL
+      - name: Check all agents use opus model
+        run: |
+          FAIL=0
+          for f in agents/*.md; do
+            name=$(basename "$f")
+            model=$(grep "^model:" "$f" | awk '{print $2}')
+            if [ "$model" != "opus" ]; then
+              echo "FAIL: $name uses model '$model' instead of 'opus'"
+              FAIL=1
+            fi
+          done
+          exit $FAIL
+
+  command-validation:
+    name: Command File Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check all commands exist and are non-empty
+        run: |
+          FAIL=0
+          for cmd in team duo status; do
+            f="commands/$cmd.md"
+            if [ ! -f "$f" ]; then
+              echo "FAIL: $f does not exist"
+              FAIL=1
+            elif [ ! -s "$f" ]; then
+              echo "FAIL: $f is empty"
+              FAIL=1
+            else
+              lines=$(wc -l < "$f")
+              echo "OK: $f ($lines lines)"
+            fi
+          done
+          exit $FAIL
+      - name: Check team.md phase numbering consistency
+        run: |
+          # Extract phase headers and verify they are in order
+          phases=$(grep "^## Phase" commands/team.md | sed 's/.*Phase \([0-9.]*\).*/\1/' | head -20)
+          echo "Phase order found:"
+          echo "$phases"
+          # Check no duplicate phase numbers
+          dupes=$(echo "$phases" | sort | uniq -d)
+          if [ -n "$dupes" ]; then
+            echo "FAIL: Duplicate phase numbers: $dupes"
+            exit 1
+          fi
+          echo "OK: No duplicate phase numbers"
+
+  cross-file-consistency:
+    name: Cross-File Consistency
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check package limit consistency (should be 10)
+        run: |
+          FAIL=0
+          for f in agents/*.md commands/team.md; do
+            count=$(grep -c "超過 10 個" "$f" 2>/dev/null || true)
+            bad=$(grep -c "超過 [0-9] 個新" "$f" 2>/dev/null || true)
+            # Filter out the correct "10" matches
+            wrong=$(grep "超過 [0-9] 個新" "$f" 2>/dev/null | grep -v "超過 10 個" | grep -v "超過 20 個" || true)
+            if [ -n "$wrong" ]; then
+              echo "FAIL: $f has inconsistent package limit:"
+              echo "$wrong"
+              FAIL=1
+            fi
+          done
+          exit $FAIL
+      - name: Check file limit consistency (should be 20)
+        run: |
+          FAIL=0
+          for f in agents/*.md commands/team.md; do
+            wrong=$(grep "超過 [0-9]* 個檔案\|超過 [0-9]* 個.*檔" "$f" 2>/dev/null | grep -v "超過 20 個" || true)
+            if [ -n "$wrong" ]; then
+              echo "FAIL: $f has inconsistent file limit:"
+              echo "$wrong"
+              FAIL=1
+            fi
+          done
+          exit $FAIL
+      - name: Check no broken unicode characters
+        run: |
+          FAIL=0
+          for f in README.md agents/*.md commands/*.md; do
+            if grep -P '\x{FFFD}' "$f" 2>/dev/null; then
+              echo "FAIL: $f contains replacement characters (broken unicode)"
+              FAIL=1
+            fi
+          done
+          if [ $FAIL -eq 0 ]; then
+            echo "OK: No broken unicode"
+          fi
+          exit $FAIL
+
+  install-dry-run:
+    name: Install Script Dry Run
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify install.sh syntax
+        run: bash -n install.sh
+      - name: Verify update.sh syntax
+        run: bash -n update.sh
+      - name: Check all referenced files exist
+        run: |
+          FAIL=0
+          # Check agents referenced by install.sh exist in repo
+          for agent in architect backend frontend tester security; do
+            if [ ! -f "agents/$agent.md" ]; then
+              echo "FAIL: agents/$agent.md referenced but missing"
+              FAIL=1
+            fi
+          done
+          # Check commands referenced by install.sh exist in repo
+          for cmd in team duo status; do
+            if [ ! -f "commands/$cmd.md" ]; then
+              echo "FAIL: commands/$cmd.md referenced but missing"
+              FAIL=1
+            fi
+          done
+          # Check docs
+          if [ ! -f "docs/FRONTEND-DESIGN-RULES.md" ]; then
+            echo "FAIL: docs/FRONTEND-DESIGN-RULES.md missing"
+            FAIL=1
+          fi
+          # Check VERSION
+          if [ ! -f "VERSION" ]; then
+            echo "FAIL: VERSION file missing"
+            FAIL=1
+          fi
+          echo "All referenced files exist"
+          exit $FAIL
