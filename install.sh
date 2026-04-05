@@ -203,16 +203,12 @@ cat > "$CLAUDE_DIR/hooks/guardrail.sh" << 'HOOK'
 # PreToolUse hook: hard-block file writes beyond 20, package installs beyond 10
 input=$(cat)
 tool=$(echo "$input" | jq -r '.tool_name' 2>/dev/null)
-# Session ID: prefer CLAUDE_SESSION_ID (if Claude Code sets it),
-# fallback to grandparent PID (more stable than parent PID across forks),
-# final fallback to parent PID
-if [ -n "${CLAUDE_SESSION_ID:-}" ]; then
-  SESSION_ID="$CLAUDE_SESSION_ID"
-elif [ -n "$PPID" ]; then
-  SESSION_ID=$(ps -o ppid= -p "$PPID" 2>/dev/null | tr -d ' ')
-  [ -z "$SESSION_ID" ] && SESSION_ID="$PPID"
-else
-  SESSION_ID="$$"
+# Session ID: extract from hook's stdin JSON (most reliable),
+# fallback to grandparent PID if JSON doesn't have it
+SESSION_ID=$(echo "$input" | jq -r '.session_id // empty' 2>/dev/null)
+if [ -z "$SESSION_ID" ]; then
+  SESSION_ID=$(ps -o ppid= -p "${PPID:-$$}" 2>/dev/null | tr -d ' ')
+  [ -z "$SESSION_ID" ] && SESSION_ID="${PPID:-$$}"
 fi
 
 # --- File count guardrail (Write/Edit) ---
