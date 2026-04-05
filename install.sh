@@ -1,7 +1,7 @@
 #!/bin/bash
 # ╔══════════════════════════════════════════╗
-# ║  超星團隊 Superstar Team — 一鍵安裝      ║
-# ║  Opus 架構師 + 4 Agent 全自動開發流水線   ║
+# ║  Superstar Team — One-Click Install      ║
+# ║  Opus Architect + 4 Agent Auto Pipeline  ║
 # ╚══════════════════════════════════════════╝
 
 set -e
@@ -15,53 +15,53 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 echo ""
-echo "⭐ 超星團隊安裝程式 v${VERSION}"
+echo "⭐ Superstar Team Installer v${VERSION}"
 echo "════════════════════"
 echo ""
 
-# 檢查 Claude Code
+# Check Claude Code
 if ! command -v claude &> /dev/null; then
-  echo -e "${RED}❌ 找不到 Claude Code CLI。先安裝：${NC}"
+  echo -e "${RED}❌ Claude Code CLI not found. Install it first:${NC}"
   echo "   npm install -g @anthropic-ai/claude-code"
   exit 1
 fi
 
-echo -e "${GREEN}✓${NC} Claude Code 已安裝"
+echo -e "${GREEN}✓${NC} Claude Code installed"
 
-# 檢查 gstack（可選，但強烈建議）
-# gstack 安裝後的 skill 目錄可能是 gstack/ 或 xtools/（gstack 內部的 skill 子目錄）
+# Check gstack (optional but strongly recommended)
+# After installation, the gstack skill directory may be gstack/ or xtools/ (gstack's internal skill subdirectory)
 if [ -d "$CLAUDE_DIR/skills/gstack" ] || [ -d "$CLAUDE_DIR/skills/xtools" ]; then
-  echo -e "${GREEN}✓${NC} gstack 已安裝（設計/QA/交付 skills 可用）"
+  echo -e "${GREEN}✓${NC} gstack installed (design/QA/delivery skills available)"
 else
-  echo -e "${YELLOW}⚠${NC}  gstack 未安裝"
+  echo -e "${YELLOW}⚠${NC}  gstack not installed"
   echo ""
-  echo "  Superstar Team 的核心編排（agents + worktree + API 契約）可獨立運作。"
-  echo "  但以下功能需要 gstack 才能啟用："
-  echo "    - Phase 2 設計流水線（design-consultation、design-shotgun）"
-  echo "    - Phase 4.5 設計驗證（design-review）"
-  echo "    - Phase 6 品質閘門（review、cso、qa、codex、health、benchmark）"
-  echo "    - Phase 7 交付（ship、document-release、canary）"
+  echo "  Superstar Team's core orchestration (agents + worktree + API contracts) works standalone."
+  echo "  However, the following features require gstack:"
+  echo "    - Phase 2 design pipeline (design-consultation, design-shotgun)"
+  echo "    - Phase 4.5 design verification (design-review)"
+  echo "    - Phase 6 quality gates (review, cso, qa, codex, health, benchmark)"
+  echo "    - Phase 7 delivery (ship, document-release, canary)"
   echo ""
-  echo "  沒有 gstack 時，這些步驟會自動跳過，不影響基本開發流程。"
+  echo "  Without gstack, these steps are automatically skipped without affecting the core dev workflow."
   echo ""
-  echo "  安裝 gstack（推薦）："
+  echo "  Install gstack (recommended):"
   echo "    git clone https://github.com/garrytan/gstack.git ~/.claude/skills/gstack"
   echo "    cd ~/.claude/skills/gstack && ./setup"
   echo ""
   if [ -t 0 ]; then
     # Interactive terminal — ask user
-    read -r -p "  要繼續安裝 Superstar Team 嗎？(Y/n) " answer
+    read -r -p "  Continue installing Superstar Team? (Y/n) " answer
     if [[ "$answer" =~ ^[Nn] ]]; then
-      echo "已取消。請先安裝 gstack 再重跑 install.sh。"
+      echo "Cancelled. Install gstack first, then re-run install.sh."
       exit 0
     fi
   else
     # Non-interactive (CI, pipe) — continue silently
-    echo -e "  ${YELLOW}⚠${NC}  非互動模式，自動繼續安裝"
+    echo -e "  ${YELLOW}⚠${NC}  Non-interactive mode, continuing installation automatically"
   fi
 fi
 
-# 建立目錄
+# Create directories
 mkdir -p "$CLAUDE_DIR/agents"
 mkdir -p "$CLAUDE_DIR/commands"
 mkdir -p "$CLAUDE_DIR/hooks"
@@ -69,51 +69,51 @@ mkdir -p "$CLAUDE_DIR/skills"
 mkdir -p "$CLAUDE_DIR/knowledge/patterns"
 mkdir -p "$CLAUDE_DIR/knowledge/training"
 
-echo -e "${GREEN}✓${NC} 目錄建立完成"
+echo -e "${GREEN}✓${NC} Directories created"
 
 # ═══════════════════════════════════
-# 記錄 repo 位置（供 update.sh 使用）
+# Record repo location (used by update.sh)
 # ═══════════════════════════════════
 
 echo "$SCRIPT_DIR" > "$CLAUDE_DIR/.superstar-repo-path"
 
 # ═══════════════════════════════════
-# Agents（symlink 到 repo，git pull 即更新）
+# Agents (symlink to repo, updates via git pull)
 # ═══════════════════════════════════
 
 for agent in architect backend frontend tester security; do
-  # 如果已有舊的非 symlink 檔案，備份後替換
+  # If an old non-symlink file exists, back it up before replacing
   target="$CLAUDE_DIR/agents/$agent.md"
   if [ -f "$target" ] && [ ! -L "$target" ]; then
     cp "$target" "$target.bak"
-    echo -e "  ${YELLOW}⚠${NC}  備份舊版 $agent.md → $agent.md.bak"
+    echo -e "  ${YELLOW}⚠${NC}  Backed up old $agent.md → $agent.md.bak"
   fi
   ln -sf "$SCRIPT_DIR/agents/$agent.md" "$target"
 done
 
-echo -e "${GREEN}✓${NC} 5 個 Agents 安裝完成（全 Opus，symlink 模式）"
+echo -e "${GREEN}✓${NC} 5 Agents installed (all Opus, symlink mode)"
 
 # ═══════════════════════════════════
-# Commands（symlink 到 repo，git pull 即更新）
+# Commands (symlink to repo, updates via git pull)
 # ═══════════════════════════════════
 
 for cmd in team duo status; do
   target="$CLAUDE_DIR/commands/$cmd.md"
   if [ -f "$target" ] && [ ! -L "$target" ]; then
     cp "$target" "$target.bak"
-    echo -e "  ${YELLOW}⚠${NC}  備份舊版 $cmd.md → $cmd.md.bak"
+    echo -e "  ${YELLOW}⚠${NC}  Backed up old $cmd.md → $cmd.md.bak"
   fi
   ln -sf "$SCRIPT_DIR/commands/$cmd.md" "$target"
 done
 
-echo -e "${GREEN}✓${NC} 3 個 Commands 安裝完成（/team /duo /status，symlink 模式）"
+echo -e "${GREEN}✓${NC} 3 Commands installed (/team /duo /status, symlink mode)"
 
 # ═══════════════════════════════════
-# Skills（從 GitHub clone）
+# Skills (clone from GitHub)
 # ═══════════════════════════════════
 
 echo ""
-echo -e "${YELLOW}安裝 Skills...${NC}"
+echo -e "${YELLOW}Installing Skills...${NC}"
 
 clone_skill() {
   local repo=$1
@@ -126,53 +126,53 @@ clone_skill() {
     fi
     echo -e "  ${GREEN}✓${NC} $repo${pin:+ @ ${pin:0:7}}"
   else
-    echo -e "  ⏭️  $dir（已存在）"
+    echo -e "  ⏭️  $dir (already exists)"
   fi
 }
 
 # ═══════════════════════════════════
-# Skill 版本鎖定（最後驗證日：2026-04-05）
-# 更新方式：改 hash 後重跑 install.sh（需先刪 ~/.claude/skills/<dir>）
+# Skill version pinning (last verified: 2026-04-05)
+# To update: change hash and re-run install.sh (delete ~/.claude/skills/<dir> first)
 # ═══════════════════════════════════
 
-# obra — Git 工作流
+# obra — Git workflow
 clone_skill "obra/superpowers" "obra-superpowers" "b7a8f76"
 for s in using-git-worktrees finishing-a-development-branch verification-before-completion dispatching-parallel-agents; do
   ln -sf "$CLAUDE_DIR/skills/obra-superpowers/skills/$s" "$CLAUDE_DIR/skills/$s" 2>/dev/null
 done
 
-# PlanetScale — 資料庫
+# PlanetScale — Database
 clone_skill "planetscale/database-skills" "planetscale-db" "b156f4c"
 for s in mysql postgres; do
   ln -sf "$CLAUDE_DIR/skills/planetscale-db/skills/$s" "$CLAUDE_DIR/skills/planetscale-$s" 2>/dev/null
 done
 
-# Addy Osmani — Web 品質
+# Addy Osmani — Web quality
 clone_skill "addyosmani/web-quality-skills" "addy-web-quality" "fed9617"
 for s in accessibility best-practices core-web-vitals performance seo web-quality-audit; do
   ln -sf "$CLAUDE_DIR/skills/addy-web-quality/skills/$s" "$CLAUDE_DIR/skills/addy-$s" 2>/dev/null
 done
 
-# Trail of Bits — 安全
+# Trail of Bits — Security
 clone_skill "trailofbits/skills" "trailofbits-security" "d7f76b5"
 for s in supply-chain-risk-auditor differential-review insecure-defaults modern-python second-opinion; do
   ln -sf "$CLAUDE_DIR/skills/trailofbits-security/plugins/$s/skills/$s" "$CLAUDE_DIR/skills/tob-$s" 2>/dev/null
 done
 
-# Compound Engineering — 學習迴圈
+# Compound Engineering — Learning loop
 clone_skill "EveryInc/compound-engineering-plugin" "compound-engineering" "b223e39"
 for s in ce-compound ce-ideate ce-plan ce-review ce-work; do
   ln -sf "$CLAUDE_DIR/skills/compound-engineering/plugins/compound-engineering/skills/$s" "$CLAUDE_DIR/skills/$s" 2>/dev/null
 done
 
-# Excalidraw — 架構圖
+# Excalidraw — Architecture diagrams
 clone_skill "coleam00/excalidraw-diagram-skill" "excalidraw-diagram" "8646fcc"
 
-# Vercel — UI 審計
+# Vercel — UI audit
 clone_skill "vercel-labs/agent-skills" "vercel-skills" "73140fc"
 ln -sf "$CLAUDE_DIR/skills/vercel-skills/skills/web-design-guidelines" "$CLAUDE_DIR/skills/vercel-web-design" 2>/dev/null
 
-echo -e "${GREEN}✓${NC} Skills 安裝完成"
+echo -e "${GREEN}✓${NC} Skills installed"
 
 # ═══════════════════════════════════
 # Hooks
@@ -255,10 +255,10 @@ echo '{}'
 HOOK
 chmod +x "$CLAUDE_DIR/hooks/guardrail.sh"
 
-echo -e "${GREEN}✓${NC} Hooks 安裝完成（output filter + guardrail）"
+echo -e "${GREEN}✓${NC} Hooks installed (output filter + guardrail)"
 
 # ═══════════════════════════════════
-# Settings（不覆蓋現有）
+# Settings (do not overwrite existing)
 # ═══════════════════════════════════
 
 # settings.json — model "opus[1m]" = Opus with 1M context window (Claude Code shorthand)
@@ -307,44 +307,44 @@ if [ ! -f "$CLAUDE_DIR/settings.json" ]; then
   }
 }
 SETTINGS
-  echo -e "${GREEN}✓${NC} settings.json 建立完成"
+  echo -e "${GREEN}✓${NC} settings.json created"
 else
-  echo -e "${YELLOW}⏭️${NC}  settings.json 已存在，跳過（不覆蓋）"
-  echo -e "  ${YELLOW}⚠${NC}  請手動確認 hooks 設定已包含 guardrail.sh 和 filter-output.sh"
-  echo -e "  ${YELLOW}⚠${NC}  參考：install.sh 中的 settings.json 範例"
+  echo -e "${YELLOW}⏭️${NC}  settings.json already exists, skipping (no overwrite)"
+  echo -e "  ${YELLOW}⚠${NC}  Please manually verify hooks config includes guardrail.sh and filter-output.sh"
+  echo -e "  ${YELLOW}⚠${NC}  Reference: settings.json example in install.sh"
 fi
 
 # ═══════════════════════════════════
-# 版本紀錄
+# Version record
 # ═══════════════════════════════════
 
 echo "$VERSION" > "$CLAUDE_DIR/.superstar-version"
 
 # ═══════════════════════════════════
-# 完成
+# Done
 # ═══════════════════════════════════
 
 SKILL_COUNT=$(find "$CLAUDE_DIR/skills" -maxdepth 1 -mindepth 1 \( -type d -o -type l \) 2>/dev/null | wc -l | tr -d ' ')
 
 echo ""
 echo "════════════════════════════════════"
-echo -e "  ${GREEN}⭐ 超星團隊安裝完成 v${VERSION}${NC}"
+echo -e "  ${GREEN}⭐ Superstar Team installed v${VERSION}${NC}"
 echo "════════════════════════════════════"
 echo ""
-echo "  🤖 Agents:   5 個（全 Opus）"
-echo "  ⚡ Skills:   $SKILL_COUNT 個"
+echo "  🤖 Agents:   5 (all Opus)"
+echo "  ⚡ Skills:   $SKILL_COUNT"
 echo "  🎯 Commands: /team  /duo  /status"
-echo "  🔧 Hooks:    測試輸出過濾（省 token）"
-echo "  🧠 知識庫:   ~/.claude/knowledge/"
-echo "  🔗 模式:     symlink（git pull 即更新）"
+echo "  🔧 Hooks:    Test output filter (saves tokens)"
+echo "  🧠 Knowledge: ~/.claude/knowledge/"
+echo "  🔗 Mode:     symlink (updates via git pull)"
 echo ""
-echo "  開始使用："
-echo "    claude                 # 開啟 Claude Code"
-echo "    /team                  # 啟動超星團隊"
-echo "    /status                # 查看狀態"
+echo "  Getting started:"
+echo "    claude                 # Launch Claude Code"
+echo "    /team                  # Start Superstar Team"
+echo "    /status                # Check status"
 echo ""
-echo "  更新："
+echo "  Update:"
 echo "    cd $(basename "$SCRIPT_DIR") && git pull"
-echo "    # 或"
+echo "    # or"
 echo "    ./update.sh"
 echo ""

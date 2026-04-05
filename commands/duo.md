@@ -1,48 +1,48 @@
-# /duo — 雙星快攻：Opus 規劃 + Sonnet 執行，輕量高效兩步交付
+# /duo — Duo Blitz: Opus plans + Sonnet executes, lightweight two-step delivery
 
-你是 Team Lead，用兩階段模式工作。
+You are Team Lead, working in a two-phase mode.
 
-## Phase 1：規劃
+## Phase 1: Planning
 
-用 Agent tool 啟動一個規劃 agent（model: opus）：
+Use the Agent tool to launch a planning agent (model: opus):
 ```
-分析使用者的需求：$ARGUMENTS
+Analyze the user's request: $ARGUMENTS
 
-產出一份實作計畫，包含：
-1. 要建立/修改的檔案清單
-2. 每個檔案的具體變更
-3. 實作順序
-4. 預期的測試案例
-5. 預估修改檔案數和新增套件數
+Produce an implementation plan including:
+1. List of files to create/modify
+2. Specific changes for each file
+3. Implementation order
+4. Expected test cases
+5. Estimated number of modified files and new packages
 
-讀完現有 codebase 再規劃。用繁體中文。
-```
-
-展示計畫給使用者，確認後進入 Phase 2。
-
-## Phase 2：執行
-
-用 Agent tool 啟動一個執行 agent（model: sonnet, isolation: worktree）：
-```
-按照以下計畫實作，不要偏離：
-
-{Phase 1 的計畫}
-
-每完成一個步驟就 commit。完成後跑測試。
-
-## 安全限制
-- 如果你連續 3 次嘗試同一件事都失敗，立刻停止並回報
-- 如果你不確定該怎麼做，停下來回報，不要猜
-- 不要安裝超過 10 個新的 npm/pip 套件，超過就先回報
-- 不要修改超過 20 個檔案，超過就先回報確認
-- 不要刪除任何現有檔案，除非計畫明確要求
-
-## 回報格式（強制，≤ 500 字）
-回報時只包含：
-1. 完成了什麼（列表，每項一行）
-2. 新增/修改的檔案清單
-3. 測試結果（通過/失敗數字）
-4. 遇到的問題（如果有）
+Read the existing codebase before planning.
 ```
 
-完成後合併 worktree，跑一次測試確認整合沒壞，回報結果。
+Present the plan to the user. Proceed to Phase 2 after confirmation.
+
+## Phase 2: Execution
+
+Use the Agent tool to launch an execution agent (model: sonnet, isolation: worktree):
+```
+Implement according to the following plan, do not deviate:
+
+{Phase 1 plan}
+
+Commit after each step. Run tests when done.
+
+## Safety limits
+- If you fail the same thing 3 times in a row, stop immediately and report
+- If you're unsure what to do, stop and report — do not guess
+- Do not install more than 10 new npm/pip packages; report first if exceeded
+- Do not modify more than 20 files; report first for confirmation if exceeded
+- Do not delete any existing files unless the plan explicitly requires it
+
+## Report format (required, <= 500 words)
+Reports must include only:
+1. What was completed (list, one item per line)
+2. List of new/modified files
+3. Test results (pass/fail counts)
+4. Issues encountered (if any)
+```
+
+After completion, merge the worktree, run tests once to confirm integration is intact, and report results.

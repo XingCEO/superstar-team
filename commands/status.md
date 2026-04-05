@@ -1,62 +1,62 @@
-# /status — 超星團隊狀態總覽
+# /status — Superstar Team Status Overview
 
-一次列出所有東西在哪、有多少、怎麼用。也會檢查有沒有新版。
+Lists everything: where it is, how much there is, and how to use it. Also checks for new versions.
 
-## 執行以下檢查並回報：
+## Run the following checks and report:
 
 ```bash
-# 版本
-echo "=== 版本 ==="
-LOCAL_VER="未知"
+# Version
+echo "=== Version ==="
+LOCAL_VER="unknown"
 if [ -f ~/.claude/.superstar-version ]; then
   LOCAL_VER=$(cat ~/.claude/.superstar-version)
 fi
-echo "本地版本：$LOCAL_VER"
+echo "Local version: $LOCAL_VER"
 
 REPO_PATH=""
 if [ -f ~/.claude/.superstar-repo-path ]; then
   REPO_PATH=$(cat ~/.claude/.superstar-repo-path)
 fi
 
-REMOTE_VER="無法檢查"
+REMOTE_VER="unable to check"
 UPDATE_AVAILABLE="false"
 if [ -n "$REPO_PATH" ] && [ -d "$REPO_PATH/.git" ]; then
   cd "$REPO_PATH"
   git fetch origin main --quiet 2>/dev/null
-  REMOTE_VER=$(git show origin/main:VERSION 2>/dev/null || echo "無法取得")
-  if [ "$REMOTE_VER" != "$LOCAL_VER" ] && [ "$REMOTE_VER" != "無法取得" ]; then
+  REMOTE_VER=$(git show origin/main:VERSION 2>/dev/null || echo "unable to fetch")
+  if [ "$REMOTE_VER" != "$LOCAL_VER" ] && [ "$REMOTE_VER" != "unable to fetch" ]; then
     UPDATE_AVAILABLE="true"
-    echo "最新版本：$REMOTE_VER ← 有更新！"
+    echo "Latest version: $REMOTE_VER ← update available!"
   else
-    echo "最新版本：$REMOTE_VER（已是最新）"
+    echo "Latest version: $REMOTE_VER (up to date)"
   fi
   cd - > /dev/null
 else
-  echo "最新版本：$REMOTE_VER（找不到 repo）"
+  echo "Latest version: $REMOTE_VER (repo not found)"
 fi
 
-# 安裝模式
+# Install mode
 echo ""
-echo "=== 安裝模式 ==="
+echo "=== Install Mode ==="
 if [ -L ~/.claude/agents/architect.md ]; then
-  echo "模式：symlink（git pull 自動更新）"
+  echo "Mode: symlink (auto-updates via git pull)"
 else
-  echo "模式：複製（需跑 update.sh 更新）"
+  echo "Mode: copy (run update.sh to update)"
 fi
 
-# 知識庫
+# Knowledge base
 echo ""
-echo "=== 知識庫 ==="
-echo "位置：~/.claude/knowledge/"
-ls ~/.claude/knowledge/*.md 2>/dev/null | wc -l | xargs echo "知識文件："
-ls ~/.claude/knowledge/patterns/*.md 2>/dev/null | wc -l | xargs echo "解法模式："
-cat ~/.claude/knowledge/training/*.jsonl 2>/dev/null | wc -l | xargs echo "訓練資料（條）："
-ls ~/.claude/knowledge/archive/*.md 2>/dev/null | wc -l | xargs echo "已歸檔："
+echo "=== Knowledge Base ==="
+echo "Location: ~/.claude/knowledge/"
+ls ~/.claude/knowledge/*.md 2>/dev/null | wc -l | xargs echo "Knowledge docs:"
+ls ~/.claude/knowledge/patterns/*.md 2>/dev/null | wc -l | xargs echo "Solution patterns:"
+cat ~/.claude/knowledge/training/*.jsonl 2>/dev/null | wc -l | xargs echo "Training entries:"
+ls ~/.claude/knowledge/archive/*.md 2>/dev/null | wc -l | xargs echo "Archived:"
 
 # Agents
 echo ""
 echo "=== Agents ==="
-echo "位置：~/.claude/agents/"
+echo "Location: ~/.claude/agents/"
 for f in ~/.claude/agents/*.md; do
   [ -f "$f" ] || continue
   name=$(basename "$f" .md)
@@ -67,42 +67,42 @@ done
 # Skills
 echo ""
 echo "=== Skills ==="
-echo "位置：~/.claude/skills/"
-find ~/.claude/skills -maxdepth 1 -mindepth 1 \( -type d -o -type l \) 2>/dev/null | wc -l | xargs echo "數量："
+echo "Location: ~/.claude/skills/"
+find ~/.claude/skills -maxdepth 1 -mindepth 1 \( -type d -o -type l \) 2>/dev/null | wc -l | xargs echo "Count:"
 
 # Commands
 echo ""
 echo "=== Commands ==="
-echo "位置：~/.claude/commands/"
+echo "Location: ~/.claude/commands/"
 ls ~/.claude/commands/*.md 2>/dev/null | xargs -I{} basename {} .md | sed 's/^/\//'
 ```
 
-## 用以下格式回報：
+## Report using the following format:
 
 ```
-📂 超星團隊狀態 vX.X.X
+📂 Superstar Team Status vX.X.X
 
-🔄 更新狀態
-   本地：vX.X.X
-   最新：vX.X.X
-   [如果有更新，顯示：⚠️ 有新版！跑 `cd {repo路徑} && ./update.sh` 更新]
-   [如果已最新，顯示：✅ 已是最新版本]
-   模式：symlink / 複製
+🔄 Update Status
+   Local:  vX.X.X
+   Latest: vX.X.X
+   [If update available: ⚠️ New version available! Run `cd {repo_path} && ./update.sh` to update]
+   [If up to date: ✅ Already on latest version]
+   Mode: symlink / copy
 
-🧠 知識庫（~/.claude/knowledge/）
-   知識文件：XX 份
-   解法模式：XX 份
-   訓練資料：XX 條
-   已歸檔：XX 份
+🧠 Knowledge Base (~/.claude/knowledge/)
+   Knowledge docs:     XX
+   Solution patterns:  XX
+   Training entries:   XX
+   Archived:           XX
 
-🤖 Agents（~/.claude/agents/）
-   [列出所有 agent 名稱和 model]
+🤖 Agents (~/.claude/agents/)
+   [List all agent names and models]
 
-⚡ Skills（~/.claude/skills/）
-   XX 個已安裝
+⚡ Skills (~/.claude/skills/)
+   XX installed
 
-🎯 可用指令
-   /team    — 開團隊做東西
-   /duo     — 輕量雙人模式
-   /status  — 就是這個
+🎯 Available Commands
+   /team    — Launch the team for development
+   /duo     — Lightweight duo mode
+   /status  — This command
 ```
