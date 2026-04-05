@@ -165,38 +165,53 @@ fi
 HOOK
 chmod +x "$CLAUDE_DIR/hooks/filter-output.sh"
 
-# Guardrail hook — programmatic file count enforcement
+# Guardrail hook — programmatic file + package enforcement
 cat > "$CLAUDE_DIR/hooks/guardrail.sh" << 'HOOK'
 #!/bin/bash
-# PostToolUse hook: count files modified by Write/Edit tools
-# Warns when approaching the 20-file limit
+# PreToolUse hook: hard-block file writes beyond 20, package installs beyond 10
 input=$(cat)
 tool=$(echo "$input" | jq -r '.tool_name' 2>/dev/null)
+SESSION_ID=$(ps -o ppid= -p $$ 2>/dev/null | tr -d ' ')
 
+# --- File count guardrail (Write/Edit) ---
 if [ "$tool" = "Write" ] || [ "$tool" = "Edit" ]; then
-  COUNTER_FILE="/tmp/superstar-team-file-count-$$"
-  # Get or create counter (shared across the session via parent PID)
-  PPID_COUNTER="/tmp/superstar-team-file-count-$(ps -o ppid= -p $$ 2>/dev/null | tr -d ' ')"
-
-  if [ -f "$PPID_COUNTER" ]; then
-    count=$(cat "$PPID_COUNTER")
-  else
-    count=0
-  fi
-
+  COUNTER="/tmp/superstar-file-${SESSION_ID}"
+  count=0
+  [ -f "$COUNTER" ] && count=$(cat "$COUNTER")
   count=$((count + 1))
-  echo "$count" > "$PPID_COUNTER"
+  echo "$count" > "$COUNTER"
 
-  if [ "$count" -ge 20 ]; then
-    jq -n --arg msg "WARNING: $count files modified this session (limit: 20). Stop and report to Lead before continuing." \
-      '{"hookSpecificOutput":{"hookEventName":"PostToolUse","message":$msg}}'
+  if [ "$count" -gt 20 ]; then
+    jq -n '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","reason":"BLOCKED: 20-file limit reached. Stop and report to Lead."}}'
     exit 0
-  elif [ "$count" -ge 15 ]; then
-    jq -n --arg msg "NOTICE: $count/20 files modified. Approaching limit." \
-      '{"hookSpecificOutput":{"hookEventName":"PostToolUse","message":$msg}}'
+  elif [ "$count" -ge 16 ]; then
+    jq -n --arg msg "WARNING: $count/20 files modified. Approaching hard limit." \
+      '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"allow","message":$msg}}'
     exit 0
   fi
 fi
+
+# --- Package install guardrail (Bash) ---
+if [ "$tool" = "Bash" ]; then
+  cmd=$(echo "$input" | jq -r '.tool_input.command' 2>/dev/null)
+  if echo "$cmd" | grep -qE '^(npm install|npm i |yarn add|pnpm add|pip install|pip3 install|cargo add|bun add)'; then
+    COUNTER="/tmp/superstar-pkg-${SESSION_ID}"
+    count=0
+    [ -f "$COUNTER" ] && count=$(cat "$COUNTER")
+    count=$((count + 1))
+    echo "$count" > "$COUNTER"
+
+    if [ "$count" -gt 10 ]; then
+      jq -n '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","reason":"BLOCKED: 10-package limit reached. Stop and report to Lead."}}'
+      exit 0
+    elif [ "$count" -ge 8 ]; then
+      jq -n --arg msg "WARNING: $count/10 packages installed. Approaching hard limit." \
+        '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"allow","message":$msg}}'
+      exit 0
+    fi
+  fi
+fi
+
 echo '{}'
 HOOK
 chmod +x "$CLAUDE_DIR/hooks/guardrail.sh"
@@ -223,13 +238,24 @@ if [ ! -f "$CLAUDE_DIR/settings.json" ]; then
           {
             "type": "command",
             "command": "~/.claude/hooks/filter-output.sh"
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/guardrail.sh"
           }
         ]
-      }
-    ],
-    "PostToolUse": [
+      },
       {
-        "matcher": "Write|Edit",
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/guardrail.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit",
         "hooks": [
           {
             "type": "command",
