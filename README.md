@@ -1,21 +1,239 @@
 <div align="center">
 
-# ⭐ SUPERSTAR TEAM
+# SUPERSTAR TEAM
 
-### 一個指令，五個 Opus，全自動交付
+### One command. Five Opus agents. Fully automated delivery.
 
-**給 Claude Code 用的全棧 AI 開發團隊。**
+**A full-stack AI dev team for Claude Code.**
 
-打 `/team`，說你想做什麼，五個 Opus agent 同時幫你寫。
+Type `/team`, say what you want, five Opus agents build it simultaneously.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-Opus_4.6-blueviolet)](https://claude.ai)
 [![Agents](https://img.shields.io/badge/Agents-5_×_Opus-ff6600)](/)
 [![Skills](https://img.shields.io/badge/Skills-24-00cc66)](/)
 
+[English](#english) | [繁體中文](#繁體中文)
+
 </div>
 
 ---
+
+# English
+
+## What is this
+
+A set of Claude Code config files. After installation, type `/team` and it will:
+
+1. Ask what you want to build (plain language, no tech knowledge needed)
+2. Auto-select tech stack, design architecture, define API contracts
+3. Auto-design UI: design system, page mockups, production HTML/CSS
+4. Launch two Opus agents in isolated git worktrees for parallel frontend + backend
+5. Run design verification immediately after frontend completes (score-gated)
+6. Post-merge quality gates: code review, cross-model review (Codex), security scan, QA, design check, health check, performance baseline
+7. Create PR, update docs, post-deploy monitoring
+8. Save learnings (including design decisions) for next time
+
+You just say what you want, confirm the architecture and design, everything else is automatic.
+
+---
+
+## Install
+
+```bash
+git clone https://github.com/XingCEO/superstar-team.git
+cd superstar-team
+./install.sh
+```
+
+## Usage
+
+```bash
+claude                              # Open Claude Code
+/team                               # Launch the team
+/team build a snack review app      # Or just say it directly
+/status                             # Check what's installed, version updates
+```
+
+## Update
+
+Agents and commands are symlinked back to this repo, so:
+
+```bash
+cd superstar-team && git pull       # Usually this is enough
+```
+
+If you installed an older version (v1.0.x, copy mode), run the upgrade once:
+
+```bash
+cd superstar-team && ./update.sh    # Auto-upgrade to symlink mode + update skills
+```
+
+`/status` will automatically tell you if there's a new version.
+
+---
+
+## Full Workflow
+
+```
+You: "Build a snack review app"
+
+        +===========================+
+   1    |   Lead listens            |
+        |   Dynamic follow-ups      |
+        +===========+===============+
+                    |
+        +===========================+
+   1.5  |   Knowledge base lookup   |
+        |   Past learnings          |
+        +===========+===============+
+                    |
+        +===========================+
+   2    |   Architect (Opus)        |
+        |   Tech stack + API contract|
+        +===========+===============+
+                    | You confirm
+        +===========================+
+  2.5   |   Design pipeline         |
+        |   System > Mockups > HTML |
+        +===========+===============+
+                    | You confirm
+        +-----------+-----------+
+        v                       v
++===============+       +===============+
+|  Backend Opus |       |  Frontend Opus|
+|  Worktree A   |       |  Worktree B   |
++=======+=======+       +=======+=======+
+   3    |                       | 3.5 Design review
+        +-----------+-----------+
+                    v
+        +===========================+
+   4    |   Merge + run tests       |
+        +===========+===============+
+                    v
+        +===========================+
+   5    |   Quality gates (7)       |
+        |   Review > Codex > Security|
+        |   > QA > Design > Health  |
+        |   > Performance           |
+        +===========+===============+
+                    v
+        +===========================+
+   6    |   PR > Docs > Canary      |
+        +===========+===============+
+                    v
+        +===========================+
+   7    |   Save learnings          |
+        +===========================+
+```
+
+---
+
+## What's Included
+
+### 5 Agents
+
+All running Opus with clear responsibilities and file boundaries. No stepping on each other.
+
+| Agent | Role |
+|-------|------|
+| Architect | Tech stack, architecture, API contracts, task assignment |
+| Backend | API, database, business logic (strict API contract compliance) |
+| Frontend | UI based on design mockups (strict DESIGN.md + 515-line design rules) |
+| Tester | Unit tests, integration tests, API contract validation, coverage |
+| Security | Vulnerability scanning, auth review, dependency audit |
+
+### 24 Skills
+
+Auto-loaded when relevant topics come up. Covers database optimization, web performance, accessibility, SEO, git workflows, security audits, diagram generation, and more. Full list in [install.sh](install.sh).
+
+### 3 Commands
+
+| Command | Purpose |
+|---------|---------|
+| `/team` | Launch the full team |
+| `/duo` | Lightweight mode: one planner, one executor |
+| `/status` | Check installation, version, knowledge base |
+
+---
+
+## Design Quality
+
+Frontend agent has a built-in 515-line [Anti AI Slop Design Rules](docs/FRONTEND-DESIGN-RULES.md), extracted from 16+ design publications.
+
+| Area | Hard Rules |
+|------|-----------|
+| Spacing | 4px baseline grid, outer margin >= inner padding |
+| Typography | Min 16px body, line-height: headings 1.1-1.2 / body 1.5-1.6 |
+| Contrast | Text >= 4.5:1, large text >= 3:1 (WCAG AA) |
+| Touch | Targets >= 44x44px |
+| Icons | No built-in emoji in UI, use SVG icon libraries (Lucide/Heroicons) |
+| Anti-slop | No purple gradients, no 3-col icon grids, no center-everything, no decorative blobs |
+
+Design pipeline: `/design-consultation` > `/design-shotgun` > `/design-html` — design is complete before frontend starts coding.
+
+---
+
+## Safety Mechanisms
+
+| Mechanism | Description |
+|-----------|-------------|
+| Three strikes | Same error 3 times in a row, agent stops and reports |
+| File limit | Must report before modifying 20+ files |
+| Package limit | Must report before installing 10+ packages |
+| No delete | Unless architecture doc explicitly requires it |
+| API contract | Frontend and backend share api-contract.md, changes must go through Lead |
+| Design review | Score-gated before merge, below 60 = rejected |
+| Cross-model review | Claude reviews first, then Codex independently reviews |
+| Progressive launch | 6 sequential steps, Lead checks between each |
+| Auto-compact | Context compressed between phases to save tokens |
+| Output filtering | Test and build output auto-trimmed |
+
+---
+
+## Knowledge Accumulation
+
+After each `/team` run, architecture decisions, design decisions, pitfalls, and solution patterns are automatically saved to `~/.claude/knowledge/`. Auto-read on next run. Auto-archived after 90 days.
+
+Also saves JSONL training data (including design-related pairs) for future model fine-tuning.
+
+---
+
+## Requirements
+
+- [Claude Code CLI](https://claude.ai)
+- Claude Max plan (recommended — five Opus agents consume significant quota)
+- git, jq
+- Codex CLI (optional, for cross-model review)
+
+## Cost
+
+Each `/team` run uses roughly 5x normal Claude Code tokens. Medium features cost about $5-15. To save costs, you can change agent models from `opus` to `sonnet` for ~40% savings.
+
+---
+
+## FAQ
+
+**Can I use it with an existing codebase?**
+Yes. The architect reads your code first and designs around it.
+
+**What if an agent gets stuck?**
+Three-strike rule takes over. No infinite token burn.
+
+**Where is knowledge stored?**
+`~/.claude/knowledge/`, all local on your machine.
+
+**What about ugly UI?**
+The design pipeline completes design system + mockups + HTML before frontend starts. Design review with scoring before merge ensures quality.
+
+**What project types are supported?**
+Full-stack web apps, pure API/CLI, frontend-only, marketing sites, refactoring, bug fixes. Lead auto-detects the type and adjusts the workflow.
+
+---
+
+---
+
+# 繁體中文
 
 ## 這是什麼
 
@@ -23,10 +241,10 @@
 
 1. 問你想做什麼（用白話講就好，不用懂技術）
 2. 自動選技術棧、設計架構、定 API 契約，讓你確認
-3. 自動設計 UI：設計系統 → 頁面設計稿 → 生產 HTML/CSS
+3. 自動設計 UI：設計系統、頁面設計稿、生產 HTML/CSS
 4. 開兩個 Opus agent 在獨立的 git worktree 裡同時寫前後端
 5. 前端完成後立刻做設計驗證（打分制，不及格打回）
-6. 合併後跑：程式碼審查 → 跨模型審查（Codex）→ 安全掃描 → QA → 設計確認 → 健康檢查 → 效能基線
+6. 合併後跑：程式碼審查、跨模型審查（Codex）、安全掃描、QA、設計確認、健康檢查、效能基線
 7. 開 PR、更新文件、部署後監控
 8. 把這次學到的東西存起來（含設計決策），下次不用重來
 
@@ -41,8 +259,6 @@ git clone https://github.com/XingCEO/superstar-team.git
 cd superstar-team
 ./install.sh
 ```
-
----
 
 ## 怎麼用
 
@@ -76,61 +292,53 @@ cd superstar-team && ./update.sh    # 自動升級為 symlink 模式 + 更新 sk
 ```
 你：「做一個讓人評價小吃的 app」
 
-        ╔═══════════════════════════╗
-   1    ║   💬 Lead 聽你說          ║
-        ║   依專案類型動態追問       ║
-        ╚═══════════╤═══════════════╝
-                    │
-        ╔═══════════════════════════╗
-   1.5  ║   🧠 讀取知識庫           ║
-        ║   前人經驗，避免重複踩坑   ║
-        ╚═══════════╤═══════════════╝
-                    │
-        ╔═══════════════════════════╗
-   2    ║   🏗️  架構師 (Opus)       ║
-        ║   技術棧 + API 契約       ║
-        ╚═══════════╤═══════════════╝
-                    │ 你確認
-        ╔═══════════════════════════╗
-  2.5   ║   🎨 設計流水線           ║
-        ║   設計系統 → 設計稿 → HTML ║
-        ╚═══════════╤═══════════════╝
-                    │ 你確認
-        ┌───────────┴───────────┐
-        ▼                       ▼
-╔═══════════════╗       ╔═══════════════╗
-║  🔧 後端 Opus  ║       ║  🎨 前端 Opus  ║
-║  Worktree A   ║       ║  Worktree B   ║
-╚═══════╤═══════╝       ╚═══════╤═══════╝
-   3    │                       │ 3.5 設計驗證
-        └───────────┬───────────┘
-                    ▼
-        ╔═══════════════════════════╗
-   4    ║       🔀 合併 + 跑測試    ║
-        ╚═══════════╤═══════════════╝
-                    ▼
-        ╔═══════════════════════════╗
-        ║       🧪 測試 (Opus)      ║
-        ╚═══════════╤═══════════════╝
-                    ▼
-        ╔═══════════════════════════╗
-        ║       🔒 安全審查 (Opus)   ║
-        ╚═══════════╤═══════════════╝
-                    ▼
-        ╔═══════════════════════════╗
-   5    ║       ⚡ 品質閘門（7 關）  ║
-        ║  審查 → Codex → 安全      ║
-        ║  → QA → 設計 → 健康       ║
-        ║  → 效能基線               ║
-        ╚═══════════╤═══════════════╝
-                    ▼
-        ╔═══════════════════════════╗
-   6    ║  🚀 PR → ��件 → 部署監控  ║
-        ╚═══════════╤═══════════════╝
-                    ▼
-        ╔═══════════════════════════╗
-   7    ║  🧠 存經驗（含設計決策）   ║
-        ╚═══════════════════════════╝
+        +===========================+
+   1    |   Lead 聽你說              |
+        |   依專案類型動態追問        |
+        +===========+===============+
+                    |
+        +===========================+
+   1.5  |   讀取知識庫               |
+        |   前人經驗，避免重複踩坑    |
+        +===========+===============+
+                    |
+        +===========================+
+   2    |   架構師 (Opus)            |
+        |   技術棧 + API 契約        |
+        +===========+===============+
+                    | 你確認
+        +===========================+
+  2.5   |   設計流水線               |
+        |   設計系統 > 設計稿 > HTML  |
+        +===========+===============+
+                    | 你確認
+        +-----------+-----------+
+        v                       v
++===============+       +===============+
+|  後端 Opus    |       |  前端 Opus     |
+|  Worktree A   |       |  Worktree B   |
++=======+=======+       +=======+=======+
+   3    |                       | 3.5 設計驗證
+        +-----------+-----------+
+                    v
+        +===========================+
+   4    |   合併 + 跑測試            |
+        +===========+===============+
+                    v
+        +===========================+
+   5    |   品質閘門（7 關）          |
+        |   審查 > Codex > 安全      |
+        |   > QA > 設計 > 健康       |
+        |   > 效能基線               |
+        +===========+===============+
+                    v
+        +===========================+
+   6    |   PR > 文件 > 部署監控     |
+        +===========+===============+
+                    v
+        +===========================+
+   7    |   存經驗（含設計決策）      |
+        +===========================+
 ```
 
 ---
@@ -144,9 +352,9 @@ cd superstar-team && ./update.sh    # 自動升級為 symlink 模式 + 更新 sk
 | Agent | 做什麼 |
 |-------|--------|
 | 架構師 | 選技術棧、畫架構、定 API 契約、分工 |
-| 後端 | API、資料庫、業務邏輯（嚴格按 API 契��） |
-| 前端 | 基於設計稿實作 UI（嚴格按 DESIGN.md + 515 ���設計規範） |
-| 測試 | Unit test、integration test、API 契約驗��、覆蓋率 |
+| 後端 | API、資料庫、業務邏輯（嚴格按 API 契約） |
+| 前端 | 基於設計稿實作 UI（嚴格按 DESIGN.md + 515 行設計規範） |
+| 測試 | Unit test、integration test、API 契約驗證、覆蓋率 |
 | 安全 | 漏洞掃描、認證審查、依賴審計 |
 
 ### 24 個 Skill
@@ -165,17 +373,18 @@ cd superstar-team && ./update.sh    # 自動升級為 symlink 模式 + 更新 sk
 
 ## 設計品質
 
-前端 agent ���建 515 行[反 AI Slop 設計規範](docs/FRONTEND-DESIGN-RULES.md)，從 16+ 篇設計文獻研��提取。
+前端 agent 內建 515 行[反 AI Slop 設計規範](docs/FRONTEND-DESIGN-RULES.md)，從 16+ 篇設計文獻研究提取。
 
 | 面向 | 硬性規則 |
 |------|---------|
-| 間距 | 4px 基線網���，外間距 ≥ 內間距 |
-| 排版 | 最��� 16px，行高標題 1.1-1.2 / 內文 1.5-1.6 |
-| 對比度 | 文�� ≥ 4.5:1，大文字 ≥ 3:1 |
-| 觸控 | 目��� ≥ 44x44px |
+| 間距 | 4px 基線網格，外間距 >= 內間距 |
+| 排版 | 最小 16px，行高標題 1.1-1.2 / 內文 1.5-1.6 |
+| 對比度 | 文字 >= 4.5:1，大文字 >= 3:1 |
+| 觸控 | 目標 >= 44x44px |
+| 圖標 | 禁止內建 emoji，用 SVG 圖標庫（Lucide / Heroicons） |
 | Anti-slop | 禁紫藍漸層、禁 3 列卡片、禁居中一切、禁裝飾性 blob |
 
-設計流水線：`/design-consultation` → `/design-shotgun` → `/design-html`，在前端開工前��完成設計。
+設計流水線：`/design-consultation` > `/design-shotgun` > `/design-html`，在前端開工前就完成設計。
 
 ---
 
@@ -188,7 +397,7 @@ cd superstar-team && ./update.sh    # 自動升級為 symlink 模式 + 更新 sk
 | 套件上限 | 一次裝超過 10 個套件要先回報 |
 | 禁止刪檔 | 除非架構文件明確要求 |
 | API 契約 | 前後端共用 api-contract.md，改 API 必須回報 Lead |
-| 設計驗證 | 合併前打分，< 60 分不過 |
+| 設計驗證 | 合併前打分，低於 60 分不過 |
 | 跨模型審查 | Claude 審完再讓 Codex 獨立審一次 |
 | 漸進啟動 | 6 步循序，每步 Lead 檢查才開下一個 |
 | 自動壓縮 | 階段之間壓縮 context，省 token |
@@ -211,8 +420,6 @@ cd superstar-team && ./update.sh    # 自動升級為 symlink 模式 + 更新 sk
 - git、jq
 - Codex CLI（可選，跨模型審查用）
 
----
-
 ## 多少錢
 
 每次 `/team` 大約是平常用 Claude Code 的 5 倍 token。中型功能大概 $5-15 美金。想省的話可以把 agent 的 model 從 `opus` 改成 `sonnet`，省約 40%。
@@ -231,15 +438,15 @@ cd superstar-team && ./update.sh    # 自動升級為 symlink 模式 + 更新 sk
 `~/.claude/knowledge/`，全在你電腦上。
 
 **UI 很醜怎麼辦？**
-不會。設計流水線在開工前就完成設���系統 + 設計稿 + HTML，前���基於設計稿開發。合併前還有設計驗證打分。
+不會。設計流水線在開工前就完成設計系統 + 設計稿 + HTML，前端基於設計稿開發。合併前還有設計驗證打分。
 
-**支援哪些專案���型？**
-全端 Web app、純 API / CLI、純前端、行銷站、重構、修 bug。Lead 會自動判斷類型並調整���程。
+**支援哪些專案類型？**
+全端 Web app、純 API / CLI、純前端、行銷站、重構、修 bug。Lead 會自動判斷類型並調整流程。
 
 ---
 
 <div align="center">
 
-**給要出貨的人用的。**
+**Built for shippers.**
 
 </div>
