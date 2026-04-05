@@ -119,6 +119,7 @@ After determining the project type and complexity, Lead **suggests** a model —
 - If user says "whatever" or doesn't respond → use the suggestion
 - Simple tasks: suggest haiku confidently (it's genuinely enough)
 - Complex tasks: suggest opus but **always offer sonnet as alternative** (many tasks sonnet can handle fine)
+- **CRITICAL: Once a model is decided (suggested + user didn't object, or user chose), ALL subsequent Agent tool calls in this session MUST use that model.** Don't suggest sonnet then dispatch with opus — that wastes tokens and breaks user trust.
 
 ---
 
