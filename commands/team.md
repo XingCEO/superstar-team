@@ -103,6 +103,23 @@ Pick 1-2 most needed from:
 
 **Goal: User answers at most 1-2 times before entering Phase 1.5.**
 
+### Model recommendation (after determining project type)
+
+After determining the project type and complexity, Lead **suggests** a model — doesn't force it:
+
+| Complexity | Suggested model | Lead says |
+|-----------|----------------|-----------|
+| Simple (bug fix, small script, single-file change) | haiku | "This looks straightforward — I'd use haiku to save tokens. OK?" |
+| Medium (add feature, refactor, landing page) | sonnet | "Medium complexity — sonnet should handle this well. Or prefer opus?" |
+| Complex (new full-stack app, large redesign) | opus | "This is a big one — I'd recommend opus for best quality. Want to use sonnet instead to save cost?" |
+
+**Rules:**
+- Always **suggest**, never force — the user decides
+- If user already specified a model (Phase 0 config or conversation) → skip this, use their choice
+- If user says "whatever" or doesn't respond → use the suggestion
+- Simple tasks: suggest haiku confidently (it's genuinely enough)
+- Complex tasks: suggest opus but **always offer sonnet as alternative** (many tasks sonnet can handle fine)
+
 ---
 
 ## Phase 1.5: Load Knowledge Base (automatic, don't ask the user)
