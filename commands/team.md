@@ -448,6 +448,18 @@ Lead 對前端 worktree 做設計驗證：
 ```
 自動審查整個 diff — SQL 安全、邏輯錯誤、trust boundary。
 
+### 5.1.5 跨模型審查（Codex 第二意見）
+```
+觸發：Skill tool → skill: "codex"
+參數：args: "review"
+判斷：需要 codex CLI 已安裝（`which codex`）。沒裝就跳過，不阻塞流程。
+```
+用 OpenAI Codex 獨立審查同一份 diff，跟 5.1 的 Claude 審查結果交叉比對。
+- 兩邊都標 Critical → 一定要修
+- 只有一邊標 Critical → Lead 判斷，傾向修
+- 兩邊結論矛盾 → Lead 展示給使用者，讓使用者決定
+這步的目的：避免單一模型的盲點。Claude 審完 Claude 自己的 code，容易漏。
+
 ### 5.2 安全掃描
 ```
 觸發：Skill tool → skill: "cso"
@@ -479,6 +491,15 @@ Phase 3.5 已經做過一輪設計審查，這裡是合併後的最終確認。
 type checker、linter、test runner、dead code — 產出 0-10 分。
 低於 7 分 → 回報給使用者，建議修什麼。
 
+### 5.6 效能基線（有前端時觸發）
+```
+觸發：Skill tool → skill: "benchmark"
+判斷：只在 Phase 3 有啟動前端 agent 時觸發。純 API / CLI 專案跳過。
+```
+建立 Core Web Vitals 基線（LCP、INP、CLS）+ 頁面載入時間 + 資源大小。
+結果存入 `docs/performance-baseline.json`，未來 PR 可以對比有沒有退化。
+這步不阻塞交付（只記錄基線），但如果 LCP > 4s 或 CLS > 0.25 → 警告使用者。
+
 ---
 
 ## Phase 6：交付
@@ -497,11 +518,27 @@ type checker、linter、test runner、dead code — 產出 0-10 分。
 ```
 自動更新 README、ARCHITECTURE、CONTRIBUTING、CLAUDE.md 對應本次改動。
 
+### 6.3 部署後監控（可選，有部署設定時觸發）
+```
+觸發：Skill tool → skill: "canary"
+判斷：只在專案有部署設定（CLAUDE.md 中有 deploy 區段，或 fly.toml / vercel.json 等存在）時觸發。
+      沒有部署設定就跳過。
+```
+部署後自動監控 5 分鐘：
+- Console 錯誤偵測
+- 效能退化（跟 5.6 基線對比）
+- 頁面載入失敗
+- 截圖對比（部署前 vs 部署後）
+
+結果處理：
+- 全綠 → 告訴使用者「部署健康，監控通過」
+- 有異常 → **立刻通知使用者**，展示問題截圖，建議是否 rollback
+
 ---
 
 ## Phase 7：知識收割（Phase 6 完成後自動執行，不問使用者）
 
-Phase 6 Ship + 文件更新全部完成後，Lead 自動將本次產出存入知識庫。
+Phase 6 全部完成後（含 canary 如果有跑的話），Lead 自動將本次產出存入知識庫。
 **時機明確：只在 Phase 6 全部完成後執行一次，不在中間階段執行。**
 
 **存放位置：** `~/.claude/knowledge/`（如果不存在就建立）
@@ -545,6 +582,13 @@ YYYY-MM-DD
 
 ## 安全注意事項
 {從安全審查報告摘要}
+
+## 設計決策（有前端時必填）
+- 美學方向和選擇原因
+- 字型組合和為什麼選它
+- 色彩系統（主色 hex + 選擇理由）
+- 使用者在 Phase 2.5 給的反饋和調整
+- 設計得分（Phase 3.5 的 /design-review 分數）
 ```
 
 ### 7.2 解法模式庫
@@ -590,6 +634,8 @@ YYYY-MM-DD
 - 遇到的 bug → 修復方式（instruction-output pair）
 - 安全問題 → 修復方式（instruction-output pair）
 - 技術選型問題 → 決策和理由（instruction-output pair）
+- 設計需求 → 最終 DESIGN.md 的選擇（instruction-output pair）
+- 使用者設計反饋 → 調整後的設計方向（instruction-output pair）
 
 **品質標記：**
 - `"quality": "high"` — 一次成功、測試通過
