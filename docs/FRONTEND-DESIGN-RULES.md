@@ -68,8 +68,24 @@
 | 「Your all-in-one platform」 | 模糊、套用所有產品 | 具體說明功能，用創辦人口吻 |
 | 「best-in-class」「cutting-edge」 | 空洞修飾詞 | 刪掉，用數據或具體描述取代 |
 | stock photo 風格的 AI 插圖 | 過度光滑、過度對稱、塑膠質感 | 使用產品截圖、真實照片、自訂插圖 |
+| 內建 emoji 當圖標（😀🚀🎉💡📊） | 跨平台渲染不一致、無法控制大小/色彩、拉低品牌形象 | 使用 SVG 圖標庫（Lucide / Heroicons / Phosphor） |
 
-### 1.5 Dashboard 專屬反模式
+### 1.5 圖標反模式
+
+| 禁止 | 為什麼是 Slop | 正確做法 |
+|------|---------------|----------|
+| 內建 emoji 代替圖標 | 每個 OS 渲染不同、無法跟品牌色彩對齊、看起來廉價 | 統一用 SVG 圖標庫 |
+| 彩色圖標混搭 | 破壞色彩系統一致性 | 圖標用 `currentColor`，跟文字同色 |
+| 圖標大小隨意 | 視覺混亂 | 固定 token：16px / 20px / 24px，跟隨文字層級 |
+| Font Awesome 全量引入 | 400KB+ bundle，90% 沒用到 | 用 tree-shakable 的庫（Lucide、Heroicons） |
+
+**推薦圖標庫：**
+- **Lucide**：1400+ 圖標，tree-shakable，React/Vue/Svelte 原生支援
+- **Heroicons**：Tailwind 團隊出品，分 outline/solid 兩套
+- **Phosphor Icons**：6 種粗細變體，適合需要更多表達力的場景
+- **Radix Icons**：極簡風格，適合 Dashboard / 工具類產品
+
+### 1.6 Dashboard 專屬反模式
 
 | 禁止 | 為什麼是 Slop |
 |------|---------------|
@@ -477,6 +493,8 @@ export function AppButton(props: ButtonProps) {
 - [ ] 無均勻間距（有明確的層級差異）
 - [ ] 無 stock photo 風格的 AI 插圖
 - [ ] 無空洞行銷用語
+- [ ] 無內建 emoji 當圖標（用 SVG 圖標庫）
+- [ ] 圖標統一用 `currentColor`，無彩色圖標
 - [ ] 字型非純 Inter/Roboto/Arial（除非品牌要求）
 
 ---

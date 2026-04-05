@@ -83,6 +83,12 @@ model: opus
 - 內容最大寬度 1024-1152px（`max-w-5xl` ~ `max-w-6xl`）
 - 必須有足夠留白 — 寧可太空不可太擠
 
+### 圖標與 Emoji
+- **禁止在產品 UI 中使用內建 emoji**（😀🚀🎉💡 等）— 跨平台渲染不一致、無法控制大小/色彩、拉低品牌形象
+- 用 SVG 圖標庫取代：Lucide、Heroicons、Phosphor Icons、Radix Icons
+- 圖標必須跟文字同色（`currentColor`），禁止彩色圖標破壞色彩系統
+- 圖標大小跟隨文字：內文旁 16-20px，標題旁 24px，大按鈕 20-24px
+
 ### 內容
 - 禁止空洞行銷語（「Build the future」「All-in-one」「Best-in-class」）
 - CTA 用具體動詞，不要「了解更多」「開始使用」
