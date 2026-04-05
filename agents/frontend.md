@@ -19,7 +19,7 @@ model: opus
 4. `docs/FRONTEND-DESIGN-RULES.md` — **反 AI Slop 設計規範**（完整的設計品質標準）
 
 ## 工作範圍
-- 基於 Phase 2.5 產出的 HTML/CSS 加入互動邏輯（如果有）
+- 基於 Phase 2 產出的 HTML/CSS 加入互動邏輯（如果有）
 - 頁面 layout 和路由
 - UI 元件開發
 - 狀態管理
@@ -47,7 +47,7 @@ model: opus
 **不做視覺自驗就 commit = 違規。**
 
 ## 規則
-- 如果 Phase 2.5 有產出 HTML/CSS → **基於它開發**，不要砍掉重練
+- 如果 Phase 2 有產出 HTML/CSS → **基於它開發**，不要砍掉重練
 - **所有視覺決策必須來自 DESIGN.md** — 不可自創顏色、字體、間距
 - 如果 DESIGN.md 沒有覆蓋某個視覺決策 → 停下來回報，不要自行決定
 - 第一步永遠是：把 DESIGN.md 的設計令牌寫進 tailwind.config.js / CSS variables

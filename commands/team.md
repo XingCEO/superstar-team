@@ -16,7 +16,7 @@
 **你的判斷邏輯：**
 
 ### 情況 A：使用者給了 $ARGUMENTS（直接在 /team 後面打字）
-直接用 $ARGUMENTS 作為需求，只問缺的資訊。如果資訊夠了就直接進 Phase 2，不問問題。
+直接用 $ARGUMENTS 作為需求，只問缺的資訊。如果資訊夠了就直接進 Phase 1.5，不問問題。
 
 ### 情況 B：使用者沒給 $ARGUMENTS
 用 AskUserQuestion 問**一個問題**：
@@ -78,7 +78,7 @@
 - 「需要 CMS 讓你自己改內容，還是靜態就好？」（影響技術選擇）
 
 ### 共通規則
-- 如果使用者給的資訊已經夠了 → **不追問，直接進 Phase 2**
+- 如果使用者給的資訊已經夠了 → **不追問，直接進 Phase 1.5**
 - 如果看了 cwd 就能推斷答案 → **不問，自己判斷**
 - 如果使用者的回答已經隱含了答案 → **不重複問**
 
@@ -372,10 +372,10 @@ Agent tool 參數：
 2. docs/api-contract.md — API 端點和 schema
 3. DESIGN.md — 設計系統（色彩、排版、間距、動畫的唯一真相來源）
 4. docs/FRONTEND-DESIGN-RULES.md — **反 AI Slop 設計規範**（完整品質標準，必讀）
-5. Phase 2.5 產出的 HTML/CSS（如果有）— 這是你的起點，不要砍掉重練
+5. Phase 2 產出的 HTML/CSS（如果有）— 這是你的起點，不要砍掉重練
 
 ## 實作內容
-- 如果 Phase 2.5 已經產出 HTML/CSS → **基於它開發**，加入路由、狀態管理、API 串接、互動邏輯
+- 如果 Phase 2 已經產出 HTML/CSS → **基於它開發**，加入路由、狀態管理、API 串接、互動邏輯
 - 如果沒有 HTML/CSS → 從 DESIGN.md 的設計系統開始，但要先把設計令牌（色彩、字體、間距）寫進 tailwind.config.js / CSS variables，再寫任何元件
 - 頁面 layout 和路由
 - UI 元件（必須用 shadcn/ui 或同等級元件庫，禁止從零手刻基礎元件）
@@ -528,7 +528,7 @@ Lead 對前端 worktree 做設計驗證：
 - 得分 60-79 → Lead 用 `/design-review` 的自動修復功能修 High 以上的問題，修完重跑一次
 - 得分 < 60 → **停下來通知使用者**，展示截圖和主要問題，建議：
   - 選項 A：讓 Lead 修（可能需要多輪）
-  - 選項 B：回 Phase 2.5 重做設計
+  - 選項 B：回 Phase 2 重做設計
 
 **這步的目的：在合併前就抓住設計問題，不要等到 Phase 6.4 才發現。**
 
@@ -557,18 +557,18 @@ Lead 對前端 worktree 做設計驗證：
 
 **失敗處理規則（所有閘門統一）：**
 - Low/Medium issue → Lead 自行修復，修完重跑該閘門
-- High issue → Lead 修復後，從 5.1 重新跑一次（因為修復可能引入新問題）
+- High issue → Lead 修復後，從 6.1 重新跑一次（因為修復可能引入新問題）
 - Critical issue → **停下來通知使用者**，說明問題和建議修法，等使用者決定
 - 同一閘門連續失敗 3 次 → 停下來通知使用者，不再自動重試
 - 失敗計數器規則：只要該閘門通過一次就清零；計數器是每個閘門獨立的，不跨閘門累計
 
-### 5.1 程式碼審查
+### 6.1 程式碼審查
 ```
 觸發：Skill tool → skill: "review"
 ```
 自動審查整個 diff — SQL 安全、邏輯錯誤、trust boundary。
 
-### 5.1.5 跨模型審查（Codex 第二意見）
+### 6.1.5 跨模型審查（Codex 第二意見）
 ```
 觸發：Skill tool → skill: "codex"
 參數：args: "review"
@@ -580,41 +580,41 @@ Lead 對前端 worktree 做設計驗證：
 - 兩邊結論矛盾 → Lead 展示給使用者，讓使用者決定
 這步的目的：避免單一模型的盲點。Claude 審完 Claude 自己的 code，容易漏。
 
-### 5.2 安全掃描
+### 6.2 安全掃描
 ```
 觸發：Skill tool → skill: "cso"
 ```
 完整安全審計 — secrets、依賴供應鏈、OWASP Top 10。
 （Trail of Bits skills 會自動介入）
 
-### 5.3 QA 測試
+### 6.3 QA 測試
 ```
 觸發：Skill tool → skill: "qa"
-判斷：只在 Phase 3 有啟動前端 agent 時觸發。純 API / CLI 專案跳過。
+判斷：只在 Phase 4 有啟動前端 agent 時觸發。純 API / CLI 專案跳過。
 ```
 用 headless browser 跑完整 QA — 表單、路由、responsive、console error。
 
-### 5.4 最終設計確認
+### 6.4 最終設計確認
 ```
 觸發：Skill tool → skill: "design-review"
-判斷：只在 Phase 3 有啟動前端 agent 時觸發。純 API / CLI 專案跳過。
+判斷：只在 Phase 4 有啟動前端 agent 時觸發。純 API / CLI 專案跳過。
 ```
 Phase 4.5 已經做過一輪設計審查，這裡是合併後的最終確認。
 重點檢查：合併有沒有破壞 UI、跨頁面一致性、a11y、響應式。
 （Addy Osmani a11y + Vercel web-design skills 會自動介入）
 如果發現新問題（Phase 4.5 沒抓到的） → 按失敗處理規則處理。
 
-### 5.5 健康檢查
+### 6.5 健康檢查
 ```
 觸發：Skill tool → skill: "health"
 ```
 type checker、linter、test runner、dead code — 產出 0-10 分。
 低於 7 分 → 回報給使用者，建議修什麼。
 
-### 5.6 效能基線（有前端時觸發）
+### 6.6 效能基線（有前端時觸發）
 ```
 觸發：Skill tool → skill: "benchmark"
-判斷：只在 Phase 3 有啟動前端 agent 時觸發。純 API / CLI 專案跳過。
+判斷：只在 Phase 4 有啟動前端 agent 時觸發。純 API / CLI 專案跳過。
 ```
 建立 Core Web Vitals 基線（LCP、INP、CLS）+ 頁面載入時間 + 資源大小。
 結果存入 `docs/performance-baseline.json`，未來 PR 可以對比有沒有退化。
@@ -626,19 +626,19 @@ type checker、linter、test runner、dead code — 產出 0-10 分。
 
 品質閘門全過後：
 
-### 6.1 Ship
+### 7.1 Ship
 ```
 觸發：Skill tool → skill: "ship"
 ```
 自動：merge base branch → 跑測試 → bump VERSION → 更新 CHANGELOG → commit → push → 建 PR。
 
-### 6.2 文件更新
+### 7.2 文件更新
 ```
 觸發：Skill tool → skill: "document-release"
 ```
 自動更新 README、ARCHITECTURE、CONTRIBUTING、CLAUDE.md 對應本次改動。
 
-### 6.3 部署後監控（可選，有部署設定時觸發）
+### 7.3 部署後監控（可選，有部署設定時觸發）
 ```
 觸發：Skill tool → skill: "canary"
 判斷：只在專案有部署設定（CLAUDE.md 中有 deploy 區段，或 fly.toml / vercel.json 等存在）時觸發。
@@ -671,7 +671,7 @@ Phase 7 全部完成後（含 canary 如果有跑的話），Lead 自動將本�
 
 **必存檔案：**
 
-### 7.1 架構決策紀錄
+### 8.1 架構決策紀錄
 ```
 檔名：~/.claude/knowledge/YYYY-MM-DD-{功能名}.md
 ```
@@ -707,11 +707,11 @@ YYYY-MM-DD
 - 美學方向和選擇原因
 - 字型組合和為什麼選它
 - 色彩系統（主色 hex + 選擇理由）
-- 使用者在 Phase 2.5 給的反饋和調整
+- 使用者在 Phase 2 給的反饋和調整
 - 設計得分（Phase 4.5 的 /design-review 分數）
 ```
 
-### 7.2 解法模式庫
+### 8.2 解法模式庫
 如果本次開發中解決了任何非顯而易見的問題，額外存一份：
 ```
 檔名：~/.claude/knowledge/patterns/{問題類型}.md
@@ -729,7 +729,7 @@ YYYY-MM-DD
 原因和替代方案
 ```
 
-### 7.3 索引更新
+### 8.3 索引更新
 每次新增知識後，更新 `~/.claude/knowledge/INDEX.md`：
 ```markdown
 # 知識庫索引
@@ -739,7 +739,7 @@ YYYY-MM-DD
 | 2026-04-04 | 用戶認證 | JWT, bcrypt, middleware | 2026-04-04-auth.md |
 ```
 
-### 7.4 訓練資料格式（為未來模型訓練準備）
+### 8.4 訓練資料格式（為未來模型訓練準備）
 每次知識收割時，額外存一份 JSONL 格式到 `~/.claude/knowledge/training/`：
 ```
 檔名：~/.claude/knowledge/training/YYYY-MM-DD-{功能名}.jsonl
@@ -846,8 +846,8 @@ YYYY-MM-DD
 
 **Phase 之間自動清理：**
 - Phase 2（設計）+ Phase 3（架構）完成後，Lead 執行 `/compact` 壓縮探索過程，只保留 DESIGN.md + architecture.md + api-contract.md
-- Phase 3（開發）每個 agent 回來後，Lead 執行 `/compact` 壓縮 agent 的完整回報，只保留摘要
-- Phase 4（整合）開始前，如果 context 已經很大，Lead 執行 `/compact` 再繼續
+- Phase 4（開發）每個 agent 回來後，Lead 執行 `/compact` 壓縮 agent 的完整回報，只保留摘要
+- Phase 5（整合）開始前，如果 context 已經很大，Lead 執行 `/compact` 再繼續
 
 **Agent prompt 精簡規則：**
 每個 agent 的 prompt 已經內建安全限制和回報格式（≤ 500 字），不需要額外加。
