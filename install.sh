@@ -68,11 +68,11 @@ if [ -t 0 ]; then
   echo "  Model Configuration"
   echo "════════════════════════════════════"
   echo ""
-  echo "  Which model should /team agents use?"
+  echo "  What are you mainly building?"
   echo ""
-  echo "  1) opus    — Best quality, highest cost     (recommended for Max plan)"
-  echo "  2) sonnet  — Good quality, moderate cost    (recommended for Pro plan)"
-  echo "  3) haiku   — Fast & cheap, basic quality    (recommended for light tasks)"
+  echo "  1) Production apps — quality matters most           → opus"
+  echo "  2) Side projects / prototypes — speed & cost        → sonnet"
+  echo "  3) Simple scripts / quick fixes — fast & cheap      → haiku"
   echo ""
   read -r -p "  Choose [1/2/3] (default: 1): " model_choice
   case "$model_choice" in
