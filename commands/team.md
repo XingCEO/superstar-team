@@ -117,6 +117,7 @@
 
 ```
 觸發：Skill tool → skill: "design-consultation"
+不可用時：Lead 自己根據產品需求 + docs/FRONTEND-DESIGN-RULES.md 產出 DESIGN.md
 ```
 
 設計諮詢會自動：
@@ -194,6 +195,7 @@ Lead 先檢查 Figma MCP 是否可用（嘗試呼叫 figma MCP 工具）。
 
 ```
 觸發：Skill tool → skill: "design-html"
+不可用時：跳過 HTML 生成，前端 agent 直接從 DESIGN.md 開始開發
 ```
 
 設計最終化會自動：
@@ -514,6 +516,7 @@ Lead 對前端 worktree 做設計驗證：
 
 ```
 觸發：Skill tool → skill: "design-review"
+不可用時：Lead 自己用 /browse 截圖，手動對照 DESIGN.md 評估品質
 ```
 
 **設計審查會自動：**
@@ -565,12 +568,14 @@ Lead 對前端 worktree 做設計驗證：
 ### 6.1 程式碼審查
 ```
 觸發：Skill tool → skill: "review"
+不可用時：Lead 自己讀 git diff，手動做 code review
 ```
 自動審查整個 diff — SQL 安全、邏輯錯誤、trust boundary。
 
 ### 6.1.5 跨模型審查（可選，有 Codex 才跑）
 ```
 觸發：Skill tool → skill: "codex"
+不可用時：跳過（本來就是可選）
 參數：args: "review"
 ```
 **前置檢查：** Lead 先跑 `which codex`。
@@ -586,6 +591,7 @@ Lead 對前端 worktree 做設計驗證：
 ### 6.2 安全掃描
 ```
 觸發：Skill tool → skill: "cso"
+不可用時：Lead 自己 grep secrets、檢查 input validation、跑 npm audit
 ```
 完整安全審計 — secrets、依賴供應鏈、OWASP Top 10。
 （Trail of Bits skills 會自動介入）
@@ -593,6 +599,7 @@ Lead 對前端 worktree 做設計驗證：
 ### 6.3 QA 測試
 ```
 觸發：Skill tool → skill: "qa"
+不可用時：Lead 自己用 /browse 跑基本功能測試
 判斷：只在 Phase 4 有啟動前端 agent 時觸發。純 API / CLI 專案跳過。
 ```
 用 headless browser 跑完整 QA — 表單、路由、responsive、console error。
@@ -600,6 +607,7 @@ Lead 對前端 worktree 做設計驗證：
 ### 6.4 最終設計確認
 ```
 觸發：Skill tool → skill: "design-review"
+不可用時：Lead 自己用 /browse 截圖做最終視覺檢查
 判斷：只在 Phase 4 有啟動前端 agent 時觸發。純 API / CLI 專案跳過。
 ```
 Phase 4.5 已經做過一輪設計審查，這裡是合併後的最終確認。
@@ -636,6 +644,7 @@ npm audit --production 2>&1 | tail -20
 ### 6.6 健康評分
 ```
 觸發：Skill tool → skill: "health"
+不可用時：Lead 直接跑 npx tsc --noEmit && npx eslint . && npm test
 ```
 type checker、linter、test runner、dead code — 產出 0-10 分。
 低於 7 分 → 回報給使用者，建議修什麼。
@@ -643,6 +652,7 @@ type checker、linter、test runner、dead code — 產出 0-10 分。
 ### 6.7 效能基線（有前端時觸發）
 ```
 觸發：Skill tool → skill: "benchmark"
+不可用時：跳過（效能基線不阻塞交付）
 判斷：只在 Phase 4 有啟動前端 agent 時觸發。純 API / CLI 專案跳過。
 ```
 建立 Core Web Vitals 基線（LCP、INP、CLS）+ 頁面載入時間 + 資源大小。
@@ -658,18 +668,21 @@ type checker、linter、test runner、dead code — 產出 0-10 分。
 ### 7.1 Ship
 ```
 觸發：Skill tool → skill: "ship"
+不可用時：Lead 手動 git commit → push → gh pr create
 ```
 自動：merge base branch → 跑測試 → bump VERSION → 更新 CHANGELOG → commit → push → 建 PR。
 
 ### 7.2 文件更新
 ```
 觸發：Skill tool → skill: "document-release"
+不可用時：Lead 自己更新 README 和 CHANGELOG
 ```
 自動更新 README、ARCHITECTURE、CONTRIBUTING、CLAUDE.md 對應本次改動。
 
 ### 7.3 部署後監控（可選，有部署設定時觸發）
 ```
 觸發：Skill tool → skill: "canary"
+不可用時：跳過（部署監控不阻塞交付）
 判斷：只在專案有部署設定（CLAUDE.md 中有 deploy 區段，或 fly.toml / vercel.json 等存在）時觸發。
       沒有部署設定就跳過。
 ```
@@ -792,32 +805,6 @@ YYYY-MM-DD
 - `"quality": "low"` — 多次嘗試、勉強完成（仍然存，但標記品質）
 
 **Lead 的職責：** 不問使用者，直接存。知識就是錢，存下來下次就不用重新花 token 問。未來拿去訓練時，按 quality 過濾。
-
----
-
-## Skill 可用性檢查（每個 Phase 觸發 Skill 前必做）
-
-觸發任何 Skill 之前，Lead **必須先檢查該 Skill 是否可用**：
-1. 嘗試呼叫 Skill tool
-2. 如果 Skill 不存在（Claude Code 回報找不到），**不要卡住**，執行以下 fallback：
-
-| 不可用的 Skill | Fallback 行為 |
-|---------------|--------------|
-| `design-consultation` | Lead 自己根據產品需求產出 DESIGN.md（用 docs/FRONTEND-DESIGN-RULES.md 當參考） |
-| `design-shotgun` | 跳過設計稿生成，直接用 DESIGN.md 進入開發 |
-| `design-html` | 跳過 HTML 生成，前端 agent 從 DESIGN.md 開始 |
-| `design-review` | Lead 自己用 `/browse` 截圖檢查，手動對照 DESIGN.md 評估品質 |
-| `review` | Lead 自己讀 diff，手動做 code review |
-| `codex` | 跳過（本來就是可選） |
-| `cso` | Lead 自己讀 code 做基本安全檢查（grep secrets、檢查 input validation） |
-| `qa` | Lead 自己用 `/browse` 跑基本功能測試 |
-| `health` | Lead 直接跑 `npx tsc --noEmit && npx eslint . && npm test` |
-| `benchmark` | 跳過（效能基線不阻塞交付） |
-| `ship` | Lead 手動執行 git 操作：commit → push → `gh pr create` |
-| `document-release` | Lead 自己更新 README/CHANGELOG |
-| `canary` | 跳過（部署監控不阻塞交付） |
-
-**原則：Skill 是加分，不是必要。沒有任何 Skill 時，Lead + agents 仍然能完成基本的開發流程。**
 
 ---
 
