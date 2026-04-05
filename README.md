@@ -9,7 +9,7 @@
 Type `/team`, say what you want, five Opus agents build it simultaneously.
 
 [![CI](https://github.com/XingCEO/superstar-team/actions/workflows/ci.yml/badge.svg)](https://github.com/XingCEO/superstar-team/actions)
-[![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC_BY--NC_4.0-lightgrey.svg)](LICENSE)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-Opus_4.6-blueviolet)](https://claude.ai)
 [![Agents](https://img.shields.io/badge/Agents-5_×_Opus-ff6600)](/)
 [![Skills](https://img.shields.io/badge/Skills-24-00cc66)](/)
