@@ -170,7 +170,7 @@ All running Opus with clear responsibilities and file boundaries. No stepping on
 
 Auto-loaded when relevant topics come up. Covers database optimization, web performance, accessibility, SEO, git workflows, security audits, diagram generation, and more. Full list in [install.sh](install.sh).
 
-> **Note:** Some skills referenced by `/team` (design-consultation, design-review, browse, ship, qa, cso, etc.) come from [gstack/xtools](https://github.com/garrytan/gstack) and must be installed separately. Superstar Team installs 7 community skill packs; the design/QA/shipping skills require the xtools runtime.
+> **Note:** `/team` can optionally leverage additional Claude Code skills (design-consultation, browse, qa, ship, etc.) if installed on your system. The core workflow runs independently — these skills enhance quality when available, and are gracefully skipped when not.
 
 ### 3 Commands
 
