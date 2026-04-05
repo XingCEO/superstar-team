@@ -384,7 +384,13 @@ Agent tool 參數：
 
 ## Phase 3.5：前端設計驗證（有前端 agent 時必跑）
 
-前端 agent 回來後、進入 Phase 4 合併前，Lead 立刻做設計驗證：
+**時序規則：**
+- 前端 agent 回來後，不管後端是否已完成，Lead **立刻**對前端 worktree 做設計驗證
+- 設計驗證在前端的 worktree 分支上跑（`cd` 到 worktree 路徑，啟動 dev server）
+- 如果後端還在跑，不用等 — 設計驗證跟後端開發可以平行
+- 設計驗證通過後，前端 worktree 等待 Phase 4 合併；不通過則立刻修
+
+Lead 對前端 worktree 做設計驗證：
 
 ```
 觸發：Skill tool → skill: "design-review"
