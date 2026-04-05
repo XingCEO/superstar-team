@@ -28,6 +28,32 @@ fi
 
 echo -e "${GREEN}✓${NC} Claude Code 已安裝"
 
+# 檢查 gstack/xtools（可選，但強烈建議）
+if [ -d "$CLAUDE_DIR/skills/xtools" ] || [ -d "$CLAUDE_DIR/skills/gstack" ]; then
+  echo -e "${GREEN}✓${NC} gstack 已安裝（設計/QA/交付 skills 可用）"
+else
+  echo -e "${YELLOW}⚠${NC}  gstack 未安裝"
+  echo ""
+  echo "  Superstar Team 的核心編排（agents + worktree + API 契約）可獨立運作。"
+  echo "  但以下功能需要 gstack 才能啟用："
+  echo "    - Phase 2 設計流水線（design-consultation、design-shotgun）"
+  echo "    - Phase 4.5 設計驗證（design-review）"
+  echo "    - Phase 6 品質閘門（review、cso、qa、codex、health、benchmark）"
+  echo "    - Phase 7 交付（ship、document-release、canary）"
+  echo ""
+  echo "  沒有 gstack 時，這些步驟會自動跳過，不影響基本開發流程。"
+  echo ""
+  echo "  安裝 gstack（推薦）："
+  echo "    git clone https://github.com/garrytan/gstack.git ~/.claude/skills/gstack"
+  echo "    cd ~/.claude/skills/gstack && ./setup"
+  echo ""
+  read -r -p "  要繼續安裝 Superstar Team 嗎？(Y/n) " answer
+  if [[ "$answer" =~ ^[Nn] ]]; then
+    echo "已取消。請先安裝 gstack 再重跑 install.sh。"
+    exit 0
+  fi
+fi
+
 # 建立目錄
 mkdir -p "$CLAUDE_DIR/agents"
 mkdir -p "$CLAUDE_DIR/commands"

@@ -795,6 +795,32 @@ YYYY-MM-DD
 
 ---
 
+## Skill 可用性檢查（每個 Phase 觸發 Skill 前必做）
+
+觸發任何 Skill 之前，Lead **必須先檢查該 Skill 是否可用**：
+1. 嘗試呼叫 Skill tool
+2. 如果 Skill 不存在（Claude Code 回報找不到），**不要卡住**，執行以下 fallback：
+
+| 不可用的 Skill | Fallback 行為 |
+|---------------|--------------|
+| `design-consultation` | Lead 自己根據產品需求產出 DESIGN.md（用 docs/FRONTEND-DESIGN-RULES.md 當參考） |
+| `design-shotgun` | 跳過設計稿生成，直接用 DESIGN.md 進入開發 |
+| `design-html` | 跳過 HTML 生成，前端 agent 從 DESIGN.md 開始 |
+| `design-review` | Lead 自己用 `/browse` 截圖檢查，手動對照 DESIGN.md 評估品質 |
+| `review` | Lead 自己讀 diff，手動做 code review |
+| `codex` | 跳過（本來就是可選） |
+| `cso` | Lead 自己讀 code 做基本安全檢查（grep secrets、檢查 input validation） |
+| `qa` | Lead 自己用 `/browse` 跑基本功能測試 |
+| `health` | Lead 直接跑 `npx tsc --noEmit && npx eslint . && npm test` |
+| `benchmark` | 跳過（效能基線不阻塞交付） |
+| `ship` | Lead 手動執行 git 操作：commit → push → `gh pr create` |
+| `document-release` | Lead 自己更新 README/CHANGELOG |
+| `canary` | 跳過（部署監控不阻塞交付） |
+
+**原則：Skill 是加分，不是必要。沒有任何 Skill 時，Lead + agents 仍然能完成基本的開發流程。**
+
+---
+
 ## 關鍵規則
 
 - **你（Lead）不寫程式碼**，只協調和審查

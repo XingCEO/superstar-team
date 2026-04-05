@@ -170,7 +170,8 @@ All running Opus with clear responsibilities and file boundaries. No stepping on
 
 Auto-loaded when relevant topics come up. Covers database optimization, web performance, accessibility, SEO, git workflows, security audits, diagram generation, and more. Full list in [install.sh](install.sh).
 
-> **Note:** `/team` can optionally leverage additional Claude Code skills (design-consultation, browse, qa, ship, etc.) if installed on your system. The core workflow runs independently — these skills enhance quality when available, and are gracefully skipped when not.
+> **What's ours vs. what's ecosystem:**
+> Superstar Team provides the multi-agent orchestration (5 agents, worktree isolation, API contracts, guardrail hooks, design rules, knowledge harvesting). For design, QA, security scanning, and shipping, `/team` calls standard Claude Code skills (design-consultation, review, qa, cso, ship, etc.) — these come from the Claude Code skill ecosystem (e.g. [gstack](https://github.com/garrytan/gstack)). **Without these skills, the core dev workflow still runs** — skills are gracefully skipped when unavailable. Install gstack for the full experience.
 
 ### 3 Commands
 
@@ -264,6 +265,9 @@ Full-stack web apps, pure API/CLI, frontend-only, marketing sites, refactoring, 
 # 繁體中文
 
 > **授權：** Apache 2.0（可商用）| **CI：** 6 個自動化 job（[查看](https://github.com/XingCEO/superstar-team/actions)）| **依賴：** 7 個外部 skill 全鎖定 commit hash | **品質閘門：** 8 道，含硬性工具檢查（tsc、eslint、npm audit）
+>
+> **什麼是我們的、什麼是生態系的：**
+> Superstar Team 提供多 agent 編排（5 agents、worktree 隔離、API 契約、guardrail hooks、設計規範、知識收割）。設計、QA、安全掃描、交付等環節透過 Claude Code skill 生態系（如 [gstack](https://github.com/garrytan/gstack)）實現。**沒有這些 skill 時核心開發流程仍可運作** — skill 不可用時自動跳過。安裝 gstack 可啟用完整體驗。
 
 ## 成品展示：「做一個小吃評價 app」
 
