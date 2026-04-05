@@ -35,7 +35,9 @@ One `/team` command produced this — no manual design work, no hand-written CSS
 
 </details>
 
-**What you see:** DM Sans typography, 4px baseline grid spacing, semantic color system, shadcn/ui components, zero emoji icons, zero purple gradients, zero 3-column icon grids. Every rule from the [515-line design spec](docs/FRONTEND-DESIGN-RULES.md) enforced automatically.
+**What you see:** DM Sans typography, 4px baseline grid spacing, semantic color system, shadcn/ui components, zero emoji icons, zero purple gradients, zero 3-column icon grids.
+
+> **Transparency:** This demo was built by hand following the [515-line design spec](docs/FRONTEND-DESIGN-RULES.md) to show the target quality. It demonstrates what `/team` output looks like when all design rules are followed. A full `/team` end-to-end recording is planned.
 
 ---
 
@@ -131,7 +133,7 @@ You: "Build a snack review app"
         +===========+===============+
                     v
         +===========================+
-   6    |   Quality gates (7)       |
+   6    |   Quality gates (8)       |
         |   Review > Codex > Security|
         |   > QA > Design > Health  |
         |   > Performance           |
@@ -267,7 +269,9 @@ Full-stack web apps, pure API/CLI, frontend-only, marketing sites, refactoring, 
 
 </details>
 
-DM Sans 字型、4px 基線網格、語意化色彩系統、shadcn/ui 元件庫。零 emoji 圖標、零紫色漸層、零三列卡片。[515 行設計規範](docs/FRONTEND-DESIGN-RULES.md)自動執行。
+DM Sans 字型、4px 基線網格、語意化色彩系統、shadcn/ui 元件庫。零 emoji 圖標、零紫色漸層、零三列卡片。
+
+> **說明：** 此 demo 是依照 [515 行設計規範](docs/FRONTEND-DESIGN-RULES.md) 手動建構，展示 `/team` 遵守所有設計規則時的目標品質。完整的 `/team` 端到端錄影正在規劃中。
 
 ---
 
@@ -362,7 +366,7 @@ cd superstar-team && ./update.sh    # 自動升級為 symlink 模式 + 更新 sk
         +===========+===============+
                     v
         +===========================+
-   6    |   品質閘門（7 關）          |
+   6    |   品質閘門（8 關）          |
         |   審查 > Codex > 安全      |
         |   > QA > 設計 > 健康       |
         |   > 效能基線               |

@@ -568,17 +568,20 @@ Lead 對前端 worktree 做設計驗證：
 ```
 自動審查整個 diff — SQL 安全、邏輯錯誤、trust boundary。
 
-### 6.1.5 跨模型審查（Codex 第二意見）
+### 6.1.5 跨模型審查（可選，有 Codex 才跑）
 ```
 觸發：Skill tool → skill: "codex"
 參數：args: "review"
-判斷：需要 codex CLI 已安裝（`which codex`）。沒裝就跳過，不阻塞流程。
 ```
-用 OpenAI Codex 獨立審查同一份 diff，跟 5.1 的 Claude 審查結果交叉比對。
+**前置檢查：** Lead 先跑 `which codex`。
+- 有 → 執行跨模型審查
+- 沒有 → 告訴使用者：「跨模型審查需要 Codex CLI（`npm i -g @openai/codex`）。已跳過，不影響其他閘門。」
+- **這步跳過不阻塞流程。**
+
+如果有跑，用 Codex 獨立審查同一份 diff，跟 6.1 的 Claude 結果交叉比對：
 - 兩邊都標 Critical → 一定要修
 - 只有一邊標 Critical → Lead 判斷，傾向修
-- 兩邊結論矛盾 → Lead 展示給使用者，讓使用者決定
-這步的目的：避免單一模型的盲點。Claude 審完 Claude 自己的 code，容易漏。
+- 兩邊結論矛盾 → Lead 展示給使用者決定
 
 ### 6.2 安全掃描
 ```
@@ -604,14 +607,40 @@ Phase 4.5 已經做過一輪設計審查，這裡是合併後的最終確認。
 （Addy Osmani a11y + Vercel web-design skills 會自動介入）
 如果發現新問題（Phase 4.5 沒抓到的） → 按失敗處理規則處理。
 
-### 6.5 健康檢查
+### 6.5 硬性工具檢查（不依賴 prompt，用真正的工具）
+
+在觸發 /health 之前，Lead **必須先跑以下指令**（有哪些就跑哪些，沒裝就跳過）：
+
+```bash
+# Type checker — 有 tsconfig.json 就跑
+npx tsc --noEmit 2>&1 | tail -20
+
+# Linter — 有 eslint 就跑
+npx eslint . --max-warnings 0 2>&1 | tail -20
+
+# 測試 — 跑一次確認全過
+npm test 2>&1 | tail -30
+
+# 依賴安全 — npm/pip/cargo audit
+npm audit --production 2>&1 | tail -20
+```
+
+**任何一項失敗 → 必須修好才能繼續。** 這不是 prompt 建議，是硬性阻斷：
+- tsc 報錯 → 修型別錯誤
+- eslint 有 error → 修 lint 問題
+- 測試失敗 → 修到全過
+- npm audit critical → 升級依賴
+
+工具檢查全過後，再觸發 /health 做整體評分：
+
+### 6.6 健康評分
 ```
 觸發：Skill tool → skill: "health"
 ```
 type checker、linter、test runner、dead code — 產出 0-10 分。
 低於 7 分 → 回報給使用者，建議修什麼。
 
-### 6.6 效能基線（有前端時觸發）
+### 6.7 效能基線（有前端時觸發）
 ```
 觸發：Skill tool → skill: "benchmark"
 判斷：只在 Phase 4 有啟動前端 agent 時觸發。純 API / CLI 專案跳過。
