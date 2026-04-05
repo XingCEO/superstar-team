@@ -257,7 +257,14 @@ Full-stack web apps, pure API/CLI, frontend-only, marketing sites, refactoring, 
 
 一個 `/team` 指令的產出 — 零手動設計、零手寫 CSS。
 
-![Desktop Demo](docs/screenshots/demo-desktop.png)
+![Desktop Demo](docs/screenshots/demo-desktop-zh.png)
+
+<details>
+<summary>手機版</summary>
+
+![Mobile Demo](docs/screenshots/demo-mobile-zh.png)
+
+</details>
 
 DM Sans 字型、4px 基線網格、語意化色彩系統、shadcn/ui 元件庫。零 emoji 圖標、零紫色漸層、零三列卡片。[515 行設計規範](docs/FRONTEND-DESIGN-RULES.md)自動執行。
 
