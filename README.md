@@ -207,8 +207,11 @@ Design pipeline: `/design-consultation` > `/design-shotgun` > `/design-html` —
 | Design review | Score-gated before merge, below 60 = rejected |
 | Cross-model review | Claude reviews first, then Codex independently reviews |
 | Progressive launch | 6 sequential steps, Lead checks between each |
+| Dependency pinning | All 7 external skills locked to verified commit hashes |
+| Hard tool checks | tsc, eslint, npm test, npm audit must pass before shipping |
 | Auto-compact | Context compressed between phases to save tokens |
 | Output filtering | Test and build output auto-trimmed |
+| CI pipeline | 6 jobs: shellcheck, agent validation, cross-file consistency, install smoke test |
 
 ---
 
@@ -440,8 +443,11 @@ cd superstar-team && ./update.sh    # 自動升級為 symlink 模式 + 更新 sk
 | 設計驗證 | 合併前打分，低於 60 分不過 |
 | 跨模型審查 | Claude 審完再讓 Codex 獨立審一次 |
 | 漸進啟動 | 6 步循序，每步 Lead 檢查才開下一個 |
+| 依賴鎖定 | 7 個外部 skill 全鎖定到驗證過的 commit hash |
+| 硬性工具檢查 | tsc、eslint、npm test、npm audit 必須通過才能交付 |
 | 自動壓縮 | 階段之間壓縮 context，省 token |
 | 輸出過濾 | 測試和建置的輸出自動裁切 |
+| CI 管線 | 6 個 job：shellcheck、agent 驗證、跨檔一致性、install 煙霧測試 |
 
 ---
 
