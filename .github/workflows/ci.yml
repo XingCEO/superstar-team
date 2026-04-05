@@ -52,15 +52,20 @@ jobs:
             echo "OK: $name"
           done
           exit $FAIL
-      - name: Check all agents use opus model
+      - name: Check all agents have a valid model field
         run: |
           FAIL=0
           for f in agents/*.md; do
             name=$(basename "$f")
             model=$(grep "^model:" "$f" | awk '{print $2}')
-            if [ "$model" != "opus" ]; then
-              echo "FAIL: $name uses model '$model' instead of 'opus'"
+            if [ -z "$model" ]; then
+              echo "FAIL: $name has no model value"
               FAIL=1
+            elif [ "$model" != "opus" ] && [ "$model" != "sonnet" ] && [ "$model" != "haiku" ]; then
+              echo "FAIL: $name has invalid model '$model' (expected opus/sonnet/haiku)"
+              FAIL=1
+            else
+              echo "OK: $name = $model"
             fi
           done
           exit $FAIL

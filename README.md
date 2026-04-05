@@ -229,7 +229,7 @@ Also saves JSONL training data (including design-related pairs) for future model
 
 ## Cost
 
-Each `/team` run uses roughly 5x normal Claude Code tokens. Medium features cost about $5-15. To save costs, you can change agent models from `opus` to `sonnet` for ~40% savings.
+Each `/team` run uses roughly 5x normal Claude Code tokens. Medium features cost about $5-15. To save costs, just say "use Sonnet" when starting `/team` — the architect stays on Opus, other agents switch to Sonnet (~40% savings).
 
 ---
 
@@ -462,7 +462,7 @@ cd superstar-team && ./update.sh    # 自動升級為 symlink 模式 + 更新 sk
 
 ## 多少錢
 
-每次 `/team` 大約是平常用 Claude Code 的 5 倍 token。中型功能大概 $5-15 美金。想省的話可以把 agent 的 model 從 `opus` 改成 `sonnet`，省約 40%。
+每次 `/team` 大約是平常用 Claude Code 的 5 倍 token。中型功能大概 $5-15 美金。想省的話在啟動時說「用 Sonnet」，架構師維持 Opus，其他 agent 自動降為 Sonnet（省約 40%）。
 
 ---
 
