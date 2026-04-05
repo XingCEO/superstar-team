@@ -28,8 +28,9 @@ fi
 
 echo -e "${GREEN}✓${NC} Claude Code 已安裝"
 
-# 檢查 gstack/xtools（可選，但強烈建議）
-if [ -d "$CLAUDE_DIR/skills/xtools" ] || [ -d "$CLAUDE_DIR/skills/gstack" ]; then
+# 檢查 gstack（可選，但強烈建議）
+# gstack 安裝後的 skill 目錄可能是 gstack/ 或 xtools/（gstack 內部的 skill 子目錄）
+if [ -d "$CLAUDE_DIR/skills/gstack" ] || [ -d "$CLAUDE_DIR/skills/xtools" ]; then
   echo -e "${GREEN}✓${NC} gstack 已安裝（設計/QA/交付 skills 可用）"
 else
   echo -e "${YELLOW}⚠${NC}  gstack 未安裝"
@@ -119,7 +120,7 @@ clone_skill() {
   local dir=$2
   local pin=$3  # commit hash to pin (optional)
   if [ ! -d "$CLAUDE_DIR/skills/$dir" ]; then
-    git clone --depth 50 "https://github.com/$repo.git" "$CLAUDE_DIR/skills/$dir" 2>/dev/null
+    git clone --depth 50 "https://github.com/$repo.git" "$CLAUDE_DIR/skills/$dir"
     if [ -n "$pin" ]; then
       (cd "$CLAUDE_DIR/skills/$dir" && git checkout "$pin" --quiet 2>/dev/null)
     fi
@@ -260,6 +261,7 @@ echo -e "${GREEN}✓${NC} Hooks 安裝完成（output filter + guardrail）"
 # Settings（不覆蓋現有）
 # ═══════════════════════════════════
 
+# settings.json — model "opus[1m]" = Opus with 1M context window (Claude Code shorthand)
 if [ ! -f "$CLAUDE_DIR/settings.json" ]; then
   cat > "$CLAUDE_DIR/settings.json" << 'SETTINGS'
 {
@@ -308,6 +310,8 @@ SETTINGS
   echo -e "${GREEN}✓${NC} settings.json 建立完成"
 else
   echo -e "${YELLOW}⏭️${NC}  settings.json 已存在，跳過（不覆蓋）"
+  echo -e "  ${YELLOW}⚠${NC}  請手動確認 hooks 設定已包含 guardrail.sh 和 filter-output.sh"
+  echo -e "  ${YELLOW}⚠${NC}  參考：install.sh 中的 settings.json 範例"
 fi
 
 # ═══════════════════════════════════
