@@ -165,7 +165,43 @@ fi
 HOOK
 chmod +x "$CLAUDE_DIR/hooks/filter-output.sh"
 
-echo -e "${GREEN}✓${NC} Hooks 安裝完成"
+# Guardrail hook — programmatic file count enforcement
+cat > "$CLAUDE_DIR/hooks/guardrail.sh" << 'HOOK'
+#!/bin/bash
+# PostToolUse hook: count files modified by Write/Edit tools
+# Warns when approaching the 20-file limit
+input=$(cat)
+tool=$(echo "$input" | jq -r '.tool_name' 2>/dev/null)
+
+if [ "$tool" = "Write" ] || [ "$tool" = "Edit" ]; then
+  COUNTER_FILE="/tmp/superstar-team-file-count-$$"
+  # Get or create counter (shared across the session via parent PID)
+  PPID_COUNTER="/tmp/superstar-team-file-count-$(ps -o ppid= -p $$ 2>/dev/null | tr -d ' ')"
+
+  if [ -f "$PPID_COUNTER" ]; then
+    count=$(cat "$PPID_COUNTER")
+  else
+    count=0
+  fi
+
+  count=$((count + 1))
+  echo "$count" > "$PPID_COUNTER"
+
+  if [ "$count" -ge 20 ]; then
+    jq -n --arg msg "WARNING: $count files modified this session (limit: 20). Stop and report to Lead before continuing." \
+      '{"hookSpecificOutput":{"hookEventName":"PostToolUse","message":$msg}}'
+    exit 0
+  elif [ "$count" -ge 15 ]; then
+    jq -n --arg msg "NOTICE: $count/20 files modified. Approaching limit." \
+      '{"hookSpecificOutput":{"hookEventName":"PostToolUse","message":$msg}}'
+    exit 0
+  fi
+fi
+echo '{}'
+HOOK
+chmod +x "$CLAUDE_DIR/hooks/guardrail.sh"
+
+echo -e "${GREEN}✓${NC} Hooks 安裝完成（output filter + guardrail）"
 
 # ═══════════════════════════════════
 # Settings（不覆蓋現有）
@@ -187,6 +223,17 @@ if [ ! -f "$CLAUDE_DIR/settings.json" ]; then
           {
             "type": "command",
             "command": "~/.claude/hooks/filter-output.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/guardrail.sh"
           }
         ]
       }
